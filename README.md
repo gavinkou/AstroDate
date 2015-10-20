@@ -5,10 +5,10 @@
 echo AstroDate::parse('2015-Jan-1')->jd  // Julian day  Output: 2457023.5
 ```
 
+#### Conversion to Astronomical Time Standards
 
-#### International Atomic Time
+##### International Atomic (TAI)
 ```php
-// Convert to TAI  
 echo AstroDate::parse('2015-Jan-1')->toTAI()
 ```
 ```
@@ -17,9 +17,8 @@ Output:
 2015-Jan-01 00:00:35 TAI
 ```
 
-#### Terrestrial Dynamic Time
+##### Terrestrial Dynamic Time (TT or TDT)
 ```php
-// Convert to TAI  
 echo AstroDate::parse('2015-Jan-1')->toTT()
 ```
 ```
@@ -29,9 +28,8 @@ Output:
 ```
 
 
-#### Barycentric Dynamic Time
+##### Barycentric Dynamic Time (TDB)
 ```php
-// Convert to TAI  
 echo AstroDate::parse('2015-Jan-1')->toTDB()
 ```
 ```
