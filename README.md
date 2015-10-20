@@ -2,7 +2,13 @@
 
 #### Julian Day
 ```php
-echo AstroDate::parse('2015-Jan-1')->jd  // Julian day  Output: 2457023.5
+AstroDate::parse('2015-Jan-1')->jd  // Result: 2457023.5
+```
+
+#### Leap Seconds
+```php
+AstroDate::parse('2015-Jan-1')->leapSec  // Result: 35
+AstroDate::parse('2015-Oct-1')->leapSec  // Result: 36
 ```
 
 #### Conversion to Astronomical Time Standards
