@@ -15,34 +15,21 @@ AstroDate::jd(2457023.5007776, TimeStd::TDB())  // Result: 2015-Jan-01 00:00:00
 
 ##### International Atomic (TAI)
 ```php
-echo AstroDate::parse('2015-Jan-1')->toTAI()
-```
-```
-Output:
-
-2015-Jan-01 00:00:35 TAI
+AstroDate::parse('2015-Jan-1')->toTAI()  // Result: 2015-Jan-01 00:00:35 TAI
 ```
 
 ##### Terrestrial Dynamic Time (TT or TDT)
 ```php
-echo AstroDate::parse('2015-Jan-1')->toTT()
+echo AstroDate::parse('2015-Jan-1')->toTT()  // Result: 2015-Jan-01 00:01:07.184 TT
 ```
-```
-Output:
 
-2015-Jan-01 00:01:07.184 TT
-```
 
 
 ##### Barycentric Dynamic Time (TDB)
 ```php
-echo AstroDate::parse('2015-Jan-1')->toTDB()
+echo AstroDate::parse('2015-Jan-1')->toTDB()  // Result: 2015-Jan-01 00:01:07.186 TDB
 ```
-```
-Output:
 
-2015-Jan-01 00:01:07.186 TDB
-```
 
 #### Leap Seconds
 ```php
