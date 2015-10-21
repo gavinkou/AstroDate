@@ -1,6 +1,6 @@
 {
   "name": "marando/astrodate",
-  "description": "",
+  "description": "A PHP Date/Time class with useful Astronomy related functionality ",
   "require": {
     "php": "^5.5",
     "marando/units": "^0.1.2"
