@@ -201,16 +201,28 @@ class AstroDate {
   protected $ts;
 
   public function __get($name) {
-    if ($name == 'jd')
-      return $this->getJD();
+    switch ($name) {
+      case 'jd':
+        return $this->getJD();
 
-    if ($name == 'era')
-      return $this->getEra();
+      case 'era':
+        return $this->getEra();
 
-    if ($name == 'leapSec')
-      return $this->getLeapSec();
+      case 'leapSec':
+        return $this->getLeapSec();
 
-    throw new Exception("{$name} is not a valid property");
+      // Pass through to property
+      case 'year':
+      case 'month':
+      case 'day':
+      case 'hour':
+      case 'min':
+      case 'sec':
+        return $this->{$name};
+
+      default:
+        throw new Exception("{$name} is not a valid property");
+    }
   }
 
   public function __set($name, $value) {
@@ -231,7 +243,6 @@ class AstroDate {
         break;
 
       default:
-
         throw new Exception("{$name} is not a valid property");
     }
   }
