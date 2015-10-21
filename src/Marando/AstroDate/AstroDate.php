@@ -55,11 +55,34 @@ class AstroDate {
     return $d;
   }
 
+  public static function parse($date) {
+    try {
+      $dt = (new DateTime($date))->format('Y-m-d H:i:s.u');
+
+      $year  = (int)substr($dt, 0, 4);
+      $month = (int)substr($dt, 5, 2);
+      $day   = (int)substr($dt, 8, 2);
+      $hour  = (int)substr($dt, 11, 2);
+      $min   = (int)substr($dt, 14, 2);
+      $sec   = (int)substr($dt, 17, strlen($dt) - 17);
+
+      return new static($year, $month, $day, $hour, $min, $sec, null, null);
+    }
+    catch (Exception $ex) {
+      throw new Exception("Unable to parse date '{$date}'");
+    }
+  }
+
+  public static function now() {
+    $now = date('Y-m-d H:i:s.u', time());
+    return static::parse($now);
+  }
+
   //
   // Properties
   //
 
-  protected $year;
+      protected $year;
   protected $month;
   protected $day;
   protected $hour;
