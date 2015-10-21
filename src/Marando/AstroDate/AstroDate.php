@@ -395,7 +395,7 @@ class AstroDate {
    */
   public function sinceMidnight() {
     $secSinceMidnight = $this->hour * 3600 + $this->min * 60 + $this->sec;
-    return new Time($secSinceMidnight);
+    return Time::sec($secSinceMidnight);
   }
 
   /**
