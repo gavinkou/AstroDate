@@ -91,7 +91,7 @@ class AstroDate {
     $d = new static();
 
     $d->setJD($jd);
-    $d->ts = $ts;
+    $d->ts = $ts != null ? $ts : TimeStandard::UTC();
 
     return $d;
   }
@@ -117,13 +117,14 @@ class AstroDate {
       $sec   = (int)substr($dt, 17, strlen($dt) - 17);
 
       // Parse astronomical time standard
+      $ts = TimeStandard::UTC();
       if (preg_match('/(UTC|TDB|TAI|TT)/', strtoupper($date), $matches))
         $ts = new TimeStandard($matches[0]);
 
       return new static($year, $month, $day, $hour, $min, $sec, null, $ts);
     }
-    catch (Exception $ex) {
-      throw new Exception("Unable to parse date '{$date}'");
+    catch (Exception $e) {
+      throw new Exception("Unable to parse date '{$date}'", null, $e);
     }
   }
 
