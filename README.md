@@ -28,6 +28,16 @@ $d->add(Time::min(32));               // 2015-Oct-01 12:32:00.000
 $d->subtract(Time::min(12));          // 2015-Oct-01 12:20:00.000 
 ```
 
+#### Difference between Two Dates
+
+```php
+$a = new AstroDate::parse('2015-10-1 11:54:01');
+$b = new AstroDate::parse('2017-6-14 10:45:12');
+
+$a->diff($b);  // Result: -621.952 days
+$b->diff($a);  // Result: 621.952 days
+```
+
 
 #### Leap Seconds
 ```php
