@@ -1,15 +1,21 @@
 AstroDate
 =========
 
-#### To Julian Day
+#### Creating Instances
 ```php
-AstroDate::parse('2015-Jan-1')->jd  // Result: 2457023.5
+AstroDate::now();                 // Current date and time  Output: 2015-Oct-21 02:59:09.318 UTC
+AstroDate::parse('2017-Oct-15');  // Parse date             Output: 2015-Oct-21 02:59:09.318 UTC
 ```
 
 #### From Julian Day
 ```php
 AstroDate::jd(2457023.5)                        // Result: 2015-Jan-01 00:00:00
 AstroDate::jd(2457023.5007776, TimeStd::TDB())  // Result: 2015-Jan-01 00:00:00
+```
+
+#### To Julian Day
+```php
+AstroDate::parse('2015-Jan-1')->jd  // Result: 2457023.5
 ```
 
 #### Conversion to Astronomical Time Standards
@@ -22,10 +28,10 @@ AstroDate::parse('2015-Jan-1')->toTDB()  // Result: 2015-Jan-01 00:01:07.186 TDB
 
 #### Addition and Subtraction
 ```php
-$d = AstroDate::parse('2015-Oct-1');  // Result: 2015-Oct-01 12:00:00.000
+$d = AstroDate::parse('2015-Oct-1');  // Result: 2015-Oct-01 12:00:00.000 
 
-$d->add(Time::min(32));               // 2015-Oct-01 12:32:00.000
-$d->subtract(Time::min(12));          // 2015-Oct-01 12:20:00.000
+$d->add(Time::min(32));               // 2015-Oct-01 12:32:00.000 
+$d->subtract(Time::min(12));          // 2015-Oct-01 12:20:00.000 
 ```
 
 #### Difference between Two Dates
@@ -38,6 +44,11 @@ $a->diff($b);  // Result: -621.952 days
 $b->diff($a);  // Result: 621.952 days
 ```
 
+#### To JPL Format
+```php
+AstroDate::now()->formatJPL();      // Day Fraction  Result: A.D. 2015-Oct-21.1272776 UTC
+AstroDate::now()->formatJPL(true);  // hh:mm:ss      Result: A.D. 2015-Oct-21 03:03:16.840 UTC.
+```
 
 #### Leap Seconds
 ```php
