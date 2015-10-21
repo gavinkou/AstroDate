@@ -2,7 +2,10 @@
 
 namespace Marando\AstroDate;
 
+use \DateTime;
+use \Exception;
 use \Marando\Units\Time;
+use \SplFileObject;
 
 /**
  * @property int   $year
@@ -18,32 +21,36 @@ use \Marando\Units\Time;
  */
 class AstroDate {
 
-  //
+  //----------------------------------------------------------------------------
   // Constructors
-  //
+  //----------------------------------------------------------------------------
 
   public function __construct($year = null, $month = null, $day = null,
           $hour = null, $min = null, $sec = null, $tz = null, TimeStd $ts = null) {
 
-    $this->jd = unixtojd(time());
+    $this->jd = 2451544.5;
+    $this->ts = TimeStd::UTC();
 
     if ($year)
-      $this->year = $year;
+      $this->year = (int)$year;
 
     if ($month)
-      $this->month = $month;
+      $this->month = (int)$month;
 
     if ($day)
-      $this->day = $day;
+      $this->day = (int)$day;
 
     if ($hour)
-      $this->hour = $hour;
+      $this->hour = (int)$hour;
 
     if ($min)
-      $this->min = $min;
+      $this->min = (int)$min;
 
     if ($sec)
-      $this->sec = $sec;
+      $this->sec = (int)$sec;
+
+    if ($ts)
+      $this->ts = $ts;
   }
 
   public static function jd($jd, TimeStd $ts = null) {
@@ -100,22 +107,36 @@ class AstroDate {
 
     if ($name == 'leapSec')
       return $this->getLeapSec();
+
+    throw new Exception("{$name} is not a valid property");
   }
 
   public function __set($name, $value) {
-    if ($name == 'jd')
-      $this->setJD($value);
+    switch ($name) {
+      case 'jd':
+        $this->setJD($value);
+        break;
 
+      case 'era':
+      case 'year':
+      case 'month':
+      case 'day':
+      case 'hour':
+      case 'min':
+      case 'sec':
+        $this->{$name} = $value;
+        break;
 
-    if ($name == 'era')
-      return $this->setEra();
+      default:
+        throw new Exception("{$name} is not a valid property");
+    }
   }
 
   //
   // Functions
   //
 
-    protected function getJD() {
+      protected function getJD() {
     $jd          = static::CalToJD($this->year, $this->month, $this->day);
     $secMidnight = $this->hour * 3600 + $this->min * 60 + $this->sec;
     $dayMidnight = $secMidnight / 86400;
@@ -213,7 +234,7 @@ class AstroDate {
 
   /**
    *
-   * @param \Marando\AstroDate\AstroDate $d
+   * @param AstroDate $d
    * @return Time
    */
   public function diff(AstroDate $d) {
@@ -230,7 +251,7 @@ class AstroDate {
   }
 
   protected function setEra() {
-    throw new \Exception();
+    throw new Exception();
   }
 
   protected function getLeapSecondsFile() {
@@ -240,7 +261,7 @@ class AstroDate {
     if (!file_exists($filename))
       exec("curl {$url} > {$filename}");
 
-    return new \SplFileObject($filename);
+    return new SplFileObject($filename);
   }
 
   protected function getLeapSec() {
@@ -314,6 +335,9 @@ class AstroDate {
     $day   = sprintf('%02d', $this->day);
     $ts    = $this->ts;
 
+    if ((int)$sec == intval($sec))
+      $sec = sprintf('%02d', $this->sec);
+
     return "{$year}-{$month}-{$day} {$hour}:{$min}:{$sec} {$ts}";
   }
 
@@ -332,9 +356,9 @@ class AstroDate {
     $ts    = $this->ts;
 
     if ($time)
-      return "{$era} {$year}-{$month}-{$day} {$hour}:{$min}:{$sec} {$ts}";
+      return trim("{$era} {$year}-{$month}-{$day} {$hour}:{$min}:{$sec} {$ts}");
     else
-      return "{$era} {$year}-{$month}-{$dayF} {$ts}";
+      return trim("{$era} {$year}-{$month}-{$dayF} {$ts}");
   }
 
   // // // Static
