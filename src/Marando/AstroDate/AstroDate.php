@@ -133,9 +133,15 @@ class AstroDate {
    * @return static
    */
   public static function now() {
+    // Temporarily set default timezone to UTC
+    $dtz = date_default_timezone_get();
+    date_default_timezone_set('UTC');
+
     // Get unix Timestamp with milliseconds
     $mt   = explode(' ', microtime());
     $unix = $mt[1];  // Unix timestamp
+    // Set back default timezone
+    date_default_timezone_set($dtz);
 
     $year  = (int)date('Y', $unix);
     $month = (int)date('m', $unix);
@@ -372,6 +378,15 @@ class AstroDate {
   }
 
   /**
+   * Converts this instance to Universal Time (UT1)
+   * @todo Implement this method
+   * @return static
+   */
+  public function toUT1() {
+    return $this;
+  }
+
+  /**
    * Finds the time difference between this date and another
    * @param AstroDate $dateB
    * @return Time
@@ -474,6 +489,43 @@ class AstroDate {
       return trim("{$era} {$year}-{$month}-{$day} {$hour}:{$min}:{$sec} {$ts}");
     else
       return trim("{$era} {$year}-{$month}-{$dayF } {$ts}");
+  }
+
+  /**
+   * Copies this instance
+   * @return static
+   */
+  public function copy() {
+    return clone $this;
+  }
+
+  public function gmst() {
+    $date = $this->copy()->toUT1();
+
+    $jd   = $date->jd - 2451545.0;
+    $jd0h = $date->subtract($this->sinceMidnight())->jd - 2451545.0;
+    $h    = $date->sinceMidnight()->hours;
+    $t    = $jd / 36525;
+
+    $gmst = 6.697374558 + 0.06570982441908 * $jd0h +
+            1.00273790935 * $h + 0.000026 * $t ** 2;
+
+    // Normalize to range 0h to 24h
+    $gmstNorm = fmod($gmst, 24);
+    if ($gmstNorm < 0)
+      $gmstNorm += 24;
+
+    return Time::hours($gmstNorm);
+  }
+
+  public function gast($location = null) {
+    $gast = $this->gmst()->add(Base::NutationInRA($this));
+
+
+    // Nutation
+    // Precession
+
+    echo 1;
   }
 
   // // // Protected
@@ -676,6 +728,32 @@ class AstroDate {
       return intval($n / $d);
     else
       throw new Exception('Cannot divide by zero');
+  }
+
+  /**
+   * Evaluates a polynomial with coefficients c at x of which x is the constant
+   * term by means of the Horner method
+   *
+   * @param  float                    $x The constant term
+   * @param  array                    $c The coefficients of the polynomial
+   * @return float                       The value of the polynomial
+   * @throws InvalidArgumentException    Occurs if no coefficients are provided
+   *
+   * @see Meeus, Jean. "Avoiding powers." Astronomical Algorithms. Richmond,
+   *          Virg.: Willmann-Bell, 2009. 10-11. Print.
+   */
+  public static function horner($x, $c) {
+    if (count($c) == 0)
+      throw new InvalidArgumentException('No coefficients were provided');
+
+    $i = count($c) - 1;
+    $y = $c[$i];
+    while ($i > 0) {
+      $i--;
+      $y = $y * $x + $c[$i];
+    }
+
+    return $y;
   }
 
   /**
