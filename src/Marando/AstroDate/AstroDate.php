@@ -488,22 +488,19 @@ class AstroDate {
     list($year, $month, $day) = static::JDtoCal($jd);
 
     // Set base YMD
-    $this->year  = $year;
-    $this->month = $month;
-    $this->day   = intval($day);
-
-    // Get total remaining seconds
-    $rsec = 86400 * ($day - intval($day));
+    $this->year  = (int)$year;
+    $this->month = (int)$month;
+    $this->day   = (int)intval($day);
 
     // Figure out HMS
-    $hour = intval($rsec / Time::SEC_IN_HOUR);
-    $min  = intval($rsec % Time::SEC_IN_MIN);
-    $sec  = $rsec - ($hour * Time::SEC_IN_HOUR + $min * Time::SEC_IN_MIN);
+    $hour = 24 * ($day - intval($day));
+    $min  = 60 * ($hour - intval($hour));
+    $sec  = 60 * ($min - intval($min));
 
     // Set HMS
-    $this->hour = $hour;
-    $this->min  = $min;
-    $this->sec  = $sec;
+    $this->hour = (int)$hour;
+    $this->min  = (int)$min;
+    $this->sec  = (float)$sec;
   }
 
   /**
