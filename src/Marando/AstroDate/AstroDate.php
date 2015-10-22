@@ -20,11 +20,13 @@
 
 namespace Marando\AstroDate;
 
+use \Marando\Meeus\Nutation\Nutation;
 use \DateTime;
 use \Exception;
 use \Marando\AstroDate\TimeStandard;
 use \Marando\Units\Time;
 use \SplFileObject;
+use \Marando\Units\Angle;
 
 /**
  * @property string       $era     Era (A.D. / B.C.) of the set date
@@ -91,7 +93,7 @@ class AstroDate {
     $d = new static();
 
     $d->setJD($jd);
-    $d->ts = $ts;
+    $d->ts = $ts != null ? $ts : TimeStandard::UTC();
 
     return $d;
   }
@@ -117,13 +119,14 @@ class AstroDate {
       $sec   = (int)substr($dt, 17, strlen($dt) - 17);
 
       // Parse astronomical time standard
+      $ts = TimeStandard::UTC();
       if (preg_match('/(UTC|TDB|TAI|TT)/', strtoupper($date), $matches))
         $ts = new TimeStandard($matches[0]);
 
       return new static($year, $month, $day, $hour, $min, $sec, null, $ts);
     }
-    catch (Exception $ex) {
-      throw new Exception("Unable to parse date '{$date}'");
+    catch (Exception $e) {
+      throw new Exception("Unable to parse date '{$date}'", null, $e);
     }
   }
 
@@ -132,6 +135,10 @@ class AstroDate {
    * @return static
    */
   public static function now() {
+    // Keep track of default timezone, then set to UTC
+    $defaultTZ = date_default_timezone_get();
+    date_default_timezone_set('UTC');
+
     // Get unix Timestamp with milliseconds
     $mt   = explode(' ', microtime());
     $unix = $mt[1];  // Unix timestamp
@@ -143,6 +150,9 @@ class AstroDate {
     $min   = (int)date('i', $unix);
     $sec   = (int)date('s', $unix);
     $micro = (float)str_replace('0.', '.', $mt[0]);  // Remove 0.
+
+    // Set back to default timezone
+    date_default_timezone_set($defaultTZ);
 
     return new static($year, $month, $day, $hour, $min, $sec + $micro);
   }
@@ -200,16 +210,28 @@ class AstroDate {
   protected $ts;
 
   public function __get($name) {
-    if ($name == 'jd')
-      return $this->getJD();
+    switch ($name) {
+      case 'jd':
+        return $this->getJD();
 
-    if ($name == 'era')
-      return $this->getEra();
+      case 'era':
+        return $this->getEra();
 
-    if ($name == 'leapSec')
-      return $this->getLeapSec();
+      case 'leapSec':
+        return $this->getLeapSec();
 
-    throw new Exception("{$name} is not a valid property");
+      // Pass through to property
+      case 'year':
+      case 'month':
+      case 'day':
+      case 'hour':
+      case 'min':
+      case 'sec':
+        return $this->{$name};
+
+      default:
+        throw new Exception("{$name} is not a valid property");
+    }
   }
 
   public function __set($name, $value) {
@@ -230,7 +252,6 @@ class AstroDate {
         break;
 
       default:
-
         throw new Exception("{$name} is not a valid property");
     }
   }
@@ -360,6 +381,15 @@ class AstroDate {
   }
 
   /**
+   * Converts this instance to Universal Time (UT1)
+   * @todo Implement this method
+   * @return static
+   */
+  public function toUT1() {
+    return $this;
+  }
+
+  /**
    * Finds the time difference between this date and another
    * @param AstroDate $dateB
    * @return Time
@@ -403,7 +433,7 @@ class AstroDate {
    * @return Time
    */
   public function untilMidnight() {
-    return Time::hours(24)->subtract($this->sinceMidnight());
+    return Time::sec(86400)->subtract($this->sinceMidnight());
   }
 
   /**
@@ -464,6 +494,79 @@ class AstroDate {
       return trim("{$era} {$year}-{$month}-{$dayF } {$ts}");
   }
 
+  /**
+   * Copies this instance
+   * @return static
+   */
+  public function copy() {
+    return clone $this;
+  }
+
+  /**
+   * Finds current the Greenwich Mean Sidereal Time (GMST) at Greenwich. An
+   * optional angle of longitude can be provided which to return the Local Mean
+   * Sidereal Time (LMST) at the specified geographic longitude.
+   *
+   * Error should be about 0.432 seconds between 2000 and 2100.
+   *
+   * @param  Angle $long Geographic longitude; positive West, negative East
+   * @return Time
+   *
+   * @see http://aa.usno.navy.mil/faq/docs/GAST.php
+   */
+  public function gmst(Angle $long = null) {
+    $date = $this->copy()->toUT1();
+
+    // Current JD as well as JD at 0h
+    $jd   = $date->jd - 2451545.0;
+    $jd0h = $date->copy()->subtract($this->sinceMidnight())->jd - 2451545.0;
+
+    // Hours since midnight
+    $h = $date->sinceMidnight()->hours;
+
+    // Calculate gmst
+    $t    = $jd / 36525;
+    $gmst = 6.697374558 + 0.06570982441908 * $jd0h +
+            1.00273790935 * $h + 0.000026 * $t ** 2;
+
+    // Adjust to local longitude if provided
+    if ($long)
+      $gmst = $gmst->toAngle()->add($long)->toTime();
+
+    // Normalize to range 0h to 24h
+    $gmstNorm = fmod($gmst, 24);
+    if ($gmstNorm < 0)
+      $gmstNorm += 24;
+
+    // Return time in hms format
+    return Time::hours($gmstNorm)->setUnit('hms')->round(3);
+  }
+
+  /**
+   * Finds current the Greenwich Apparent Sidereal Time (GAST) at Greenwich. An
+   * optional angle of longitude can be provided which to return the Local
+   * Apparent Sidereal Time (LAST) at the specified geographic longitude.
+   *
+   * Error should be about 0.432 seconds between 2000 and 2100.
+   *
+   * @param  Angle $long Geographic longitude; positive West, negative East
+   * @return Time
+   *
+   * @see @see http://aa.usno.navy.mil/faq/docs/GAST.php
+   */
+  public function gast(Angle $long = null) {
+    // Add nutation in right ascension to the GMST of current date
+    $nRA  = Nutation::inRA($this->copy()->toUT1());
+    $gast = $this->gmst()->add($nRA);
+
+    // Adjust to local longitude if provided
+    if ($long)
+      $gast = $gast->toAngle()->add($long)->toTime();
+
+    // Return time in hms format
+    return $gast->setUnit('hms')->round(3);
+  }
+
   // // // Protected
 
   /**
@@ -487,22 +590,19 @@ class AstroDate {
     list($year, $month, $day) = static::JDtoCal($jd);
 
     // Set base YMD
-    $this->year  = $year;
-    $this->month = $month;
-    $this->day   = intval($day);
-
-    // Get total remaining seconds
-    $rsec = 86400 * ($day - intval($day));
+    $this->year  = (int)$year;
+    $this->month = (int)$month;
+    $this->day   = (int)intval($day);
 
     // Figure out HMS
-    $hour = intval($rsec / Time::SEC_IN_HOUR);
-    $min  = intval($rsec % Time::SEC_IN_MIN);
-    $sec  = $rsec - ($hour * Time::SEC_IN_HOUR + $min * Time::SEC_IN_MIN);
+    $hour = 24 * ($day - intval($day));
+    $min  = 60 * ($hour - intval($hour));
+    $sec  = 60 * ($min - intval($min));
 
     // Set HMS
-    $this->hour = $hour;
-    $this->min  = $min;
-    $this->sec  = $sec;
+    $this->hour = (int)$hour;
+    $this->min  = (int)$min;
+    $this->sec  = (float)$sec;
   }
 
   /**
@@ -667,6 +767,32 @@ class AstroDate {
       return intval($n / $d);
     else
       throw new Exception('Cannot divide by zero');
+  }
+
+  /**
+   * Evaluates a polynomial with coefficients c at x of which x is the constant
+   * term by means of the Horner method
+   *
+   * @param  float                    $x The constant term
+   * @param  array                    $c The coefficients of the polynomial
+   * @return float                       The value of the polynomial
+   * @throws InvalidArgumentException    Occurs if no coefficients are provided
+   *
+   * @see Meeus, Jean. "Avoiding powers." Astronomical Algorithms. Richmond,
+   *          Virg.: Willmann-Bell, 2009. 10-11. Print.
+   */
+  protected static function Horner($x, $c) {
+    if (count($c) == 0)
+      throw new InvalidArgumentException('No coefficients were provided');
+
+    $i = count($c) - 1;
+    $y = $c[$i];
+    while ($i > 0) {
+      $i--;
+      $y = $y * $x + $c[$i];
+    }
+
+    return $y;
   }
 
   /**
