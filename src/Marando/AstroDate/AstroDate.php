@@ -135,6 +135,10 @@ class AstroDate {
    * @return static
    */
   public static function now() {
+    // Keep track of default timezone, then set to UTC
+    $defaultTZ = date_default_timezone_get();
+    date_default_timezone_set('UTC');
+
     // Get unix Timestamp with milliseconds
     $mt   = explode(' ', microtime());
     $unix = $mt[1];  // Unix timestamp
@@ -146,6 +150,9 @@ class AstroDate {
     $min   = (int)date('i', $unix);
     $sec   = (int)date('s', $unix);
     $micro = (float)str_replace('0.', '.', $mt[0]);  // Remove 0.
+
+    // Set back to default timezone
+    date_default_timezone_set($defaultTZ);
 
     return new static($year, $month, $day, $hour, $min, $sec + $micro);
   }
