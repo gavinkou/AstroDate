@@ -21,7 +21,7 @@
                 "shasum": ""
             },
             "require": {
-                "marando/astrodate": "dev-dev",
+                "marando/astrodate": "0.2.1",
                 "marando/units": "^0.1.2"
             },
             "require-dev": {
