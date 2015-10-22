@@ -150,7 +150,6 @@ class AstroDate {
     $min   = (int)date('i', $unix);
     $sec   = (int)date('s', $unix);
     $micro = (float)str_replace('0.', '.', $mt[0]);  // Remove 0.
-
     // Set back to default timezone
     date_default_timezone_set($defaultTZ);
 
@@ -565,6 +564,16 @@ class AstroDate {
 
     // Return time in hms format
     return $gast->setUnit('hms')->round(3);
+  }
+
+  /**
+   * Finds the textual name of this instance's month
+   * 
+   * @param  bool   $full True to show full month name, False for abbreviation
+   * @return string
+   */
+  public function monthName($full = true) {
+    return static::findMonthName($this->month, $full);
   }
 
   // // // Protected

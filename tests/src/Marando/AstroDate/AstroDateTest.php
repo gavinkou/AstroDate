@@ -193,6 +193,16 @@ class AstroDateTest extends \PHPUnit_Framework_TestCase {
       $this->assertEquals($d[1], $d[0]->gast()->sec, $d[0], 1e-4);
   }
 
+  /**
+   * @covers Marando\AstroDate\AstroDate::monthName
+   */
+  public function testMonthName() {
+    $d = AstroDate::parse('2015-09-17');
+
+    $this->assertEquals('September', $d->monthName(), 'full');
+    $this->assertEquals('Sep', $d->monthName(false), 'short');
+  }
+
   //----------------------------------------------------------------------------
   // Bugs
   //----------------------------------------------------------------------------
