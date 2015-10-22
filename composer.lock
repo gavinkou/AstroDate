@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "50cf9b63e755b66c7b7f09a288bddc24",
+    "hash": "1874c77748e7e614e7847c99ad55769d",
     "packages": [
         {
             "name": "marando/meeus-nutation",
-            "version": "dev-dev",
+            "version": "0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/marando/Meeus-Nutation.git",
-                "reference": "d54b70104fba7ff58cb0c815735cc01183a92a1f"
+                "reference": "c391c4e989cdd4de3ef8e088e7fbe7b38cae3408"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marando/Meeus-Nutation/zipball/d54b70104fba7ff58cb0c815735cc01183a92a1f",
-                "reference": "d54b70104fba7ff58cb0c815735cc01183a92a1f",
+                "url": "https://api.github.com/repos/marando/Meeus-Nutation/zipball/c391c4e989cdd4de3ef8e088e7fbe7b38cae3408",
+                "reference": "c391c4e989cdd4de3ef8e088e7fbe7b38cae3408",
                 "shasum": ""
             },
             "require": {
@@ -44,7 +44,7 @@
                 }
             ],
             "description": "A PHP implementation of the Nutation methods discussed in \"Astronomical Algorithms\" by J. Meeus",
-            "time": "2015-10-22 05:59:02"
+            "time": "2015-10-22 02:34:23"
         },
         {
             "name": "marando/units",
@@ -1127,9 +1127,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "marando/meeus-nutation": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
