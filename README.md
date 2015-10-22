@@ -26,6 +26,27 @@ AstroDate::parse('2015-Jan-1')->toTT()   // Result: 2015-Jan-01 00:01:07.184 TT
 AstroDate::parse('2015-Jan-1')->toTDB()  // Result: 2015-Jan-01 00:01:07.186 TDB
 ```
 
+#### Sidereal Time
+```php
+$d = AstroDate::parse('2015-Oct-19 14:36:04');
+
+// Greenwich Mean Sidereal Time
+echo $d->gmst();                      // At Greenwich
+echo $d->gmst(Angle::deg(-82.4764));  // At local longitude
+
+// Greenwich Apparent Sidereal Time
+echo $d->gast();                      // At Greenwich
+echo $d->gast(Angle::deg(-82.4764));  // At local longitude 
+```
+```
+Output:
+16ʰ27ᵐ4ˢ.661
+10ʰ57ᵐ10ˢ.325
+16ʰ27ᵐ4ˢ.578
+10ʰ57ᵐ10ˢ.242
+```
+
+
 #### Addition and Subtraction
 ```php
 $d = AstroDate::parse('2015-Oct-1');  // Result: 2015-Oct-01 12:00:00.000 
