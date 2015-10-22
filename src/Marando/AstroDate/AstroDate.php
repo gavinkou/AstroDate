@@ -433,7 +433,7 @@ class AstroDate {
    * @return Time
    */
   public function untilMidnight() {
-    return Time::hours(24)->subtract($this->sinceMidnight());
+    return Time::sec(86400)->subtract($this->sinceMidnight());
   }
 
   /**
@@ -507,13 +507,15 @@ class AstroDate {
    * optional angle of longitude can be provided which to return the Local Mean
    * Sidereal Time (LMST) at the specified geographic longitude.
    *
+   * Error should be about 0.432 seconds between 2000 and 2100.
+   *
    * @param  Angle $long Geographic longitude; positive West, negative East
    * @return Time
    *
    * @see http://aa.usno.navy.mil/faq/docs/GAST.php
    */
   public function gmst(Angle $long = null) {
-    $date = $this->copy()->toUTC();
+    $date = $this->copy()->toUT1();
 
     // Current JD as well as JD at 0h
     $jd   = $date->jd - 2451545.0;
@@ -545,6 +547,8 @@ class AstroDate {
    * optional angle of longitude can be provided which to return the Local
    * Apparent Sidereal Time (LAST) at the specified geographic longitude.
    *
+   * Error should be about 0.432 seconds between 2000 and 2100.
+   *
    * @param  Angle $long Geographic longitude; positive West, negative East
    * @return Time
    *
@@ -552,7 +556,7 @@ class AstroDate {
    */
   public function gast(Angle $long = null) {
     // Add nutation in right ascension to the GMST of current date
-    $nRA  = Nutation::inRA($this->copy()->toUTC());
+    $nRA  = Nutation::inRA($this->copy()->toUT1());
     $gast = $this->gmst()->add($nRA);
 
     // Adjust to local longitude if provided
