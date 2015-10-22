@@ -4,7 +4,7 @@
   "require": {
     "php": "^5.5",
     "marando/units": "^0.1.2",
-    "marando/meeus-nutation": "^0.2.0"
+    "marando/meeus-nutation": "dev-dev"
   },
   "require-dev": {
     "phpunit/phpunit": "^5.0"

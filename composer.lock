@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "1874c77748e7e614e7847c99ad55769d",
+    "hash": "50cf9b63e755b66c7b7f09a288bddc24",
     "packages": [
         {
             "name": "marando/meeus-nutation",
-            "version": "0.2",
+            "version": "dev-dev",
             "source": {
                 "type": "git",
                 "url": "https://github.com/marando/Meeus-Nutation.git",
-                "reference": "c391c4e989cdd4de3ef8e088e7fbe7b38cae3408"
+                "reference": "d54b70104fba7ff58cb0c815735cc01183a92a1f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marando/Meeus-Nutation/zipball/c391c4e989cdd4de3ef8e088e7fbe7b38cae3408",
-                "reference": "c391c4e989cdd4de3ef8e088e7fbe7b38cae3408",
+                "url": "https://api.github.com/repos/marando/Meeus-Nutation/zipball/d54b70104fba7ff58cb0c815735cc01183a92a1f",
+                "reference": "d54b70104fba7ff58cb0c815735cc01183a92a1f",
                 "shasum": ""
             },
             "require": {
@@ -44,7 +44,7 @@
                 }
             ],
             "description": "A PHP implementation of the Nutation methods discussed in \"Astronomical Algorithms\" by J. Meeus",
-            "time": "2015-10-22 02:34:23"
+            "time": "2015-10-22 05:59:02"
         },
         {
             "name": "marando/units",
@@ -1076,67 +1076,6 @@
             "time": "2015-06-21 13:59:46"
         },
         {
-            "name": "symfony/translation",
-            "version": "v2.7.5",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/translation.git",
-                "reference": "485877661835e188cd78345c6d4eef1290d17571"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/translation/zipball/485877661835e188cd78345c6d4eef1290d17571",
-                "reference": "485877661835e188cd78345c6d4eef1290d17571",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.9"
-            },
-            "conflict": {
-                "symfony/config": "<2.7"
-            },
-            "require-dev": {
-                "psr/log": "~1.0",
-                "symfony/config": "~2.7",
-                "symfony/intl": "~2.4",
-                "symfony/phpunit-bridge": "~2.7",
-                "symfony/yaml": "~2.2"
-            },
-            "suggest": {
-                "psr/log": "To use logging capability in translator",
-                "symfony/config": "",
-                "symfony/yaml": ""
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.7-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Component\\Translation\\": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Symfony Translation Component",
-            "homepage": "https://symfony.com",
-            "time": "2015-09-06 08:36:38"
-        },
-        {
             "name": "symfony/yaml",
             "version": "v2.7.5",
             "source": {
@@ -1188,7 +1127,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "marando/meeus-nutation": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

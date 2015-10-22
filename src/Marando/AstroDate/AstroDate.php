@@ -531,7 +531,7 @@ class AstroDate {
 
     // Adjust to local longitude if provided
     if ($long)
-      $gmst = $gmst->toAngle()->add($long)->toTime();
+      $gmst = Time::hours($gmst)->toAngle()->add($long)->toTime()->hours;
 
     // Normalize to range 0h to 24h
     $gmstNorm = fmod($gmst, 24);
