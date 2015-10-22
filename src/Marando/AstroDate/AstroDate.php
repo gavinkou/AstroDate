@@ -20,11 +20,13 @@
 
 namespace Marando\AstroDate;
 
+use \Marando\Meeus\Nutation\Nutation;
 use \DateTime;
 use \Exception;
 use \Marando\AstroDate\TimeStandard;
 use \Marando\Units\Time;
 use \SplFileObject;
+use \Marando\Units\Angle;
 
 /**
  * @property string       $era     Era (A.D. / B.C.) of the set date
@@ -133,15 +135,9 @@ class AstroDate {
    * @return static
    */
   public static function now() {
-    // Temporarily set default timezone to UTC
-    $dtz = date_default_timezone_get();
-    date_default_timezone_set('UTC');
-
     // Get unix Timestamp with milliseconds
     $mt   = explode(' ', microtime());
     $unix = $mt[1];  // Unix timestamp
-    // Set back default timezone
-    date_default_timezone_set($dtz);
 
     $year  = (int)date('Y', $unix);
     $month = (int)date('m', $unix);
@@ -499,33 +495,65 @@ class AstroDate {
     return clone $this;
   }
 
-  public function gmst() {
-    $date = $this->copy()->toUT1();
+  /**
+   * Finds current the Greenwich Mean Sidereal Time (GMST) at Greenwich. An
+   * optional angle of longitude can be provided which to return the Local Mean
+   * Sidereal Time (LMST) at the specified geographic longitude.
+   *
+   * @param  Angle $long Geographic longitude; positive West, negative East
+   * @return Time
+   *
+   * @see http://aa.usno.navy.mil/faq/docs/GAST.php
+   */
+  public function gmst(Angle $long = null) {
+    $date = $this->copy()->toUTC();
 
+    // Current JD as well as JD at 0h
     $jd   = $date->jd - 2451545.0;
-    $jd0h = $date->subtract($this->sinceMidnight())->jd - 2451545.0;
-    $h    = $date->sinceMidnight()->hours;
-    $t    = $jd / 36525;
+    $jd0h = $date->copy()->subtract($this->sinceMidnight())->jd - 2451545.0;
 
+    // Hours since midnight
+    $h = $date->sinceMidnight()->hours;
+
+    // Calculate gmst
+    $t    = $jd / 36525;
     $gmst = 6.697374558 + 0.06570982441908 * $jd0h +
             1.00273790935 * $h + 0.000026 * $t ** 2;
+
+    // Adjust to local longitude if provided
+    if ($long)
+      $gmst = $gmst->toAngle()->add($long)->toTime();
 
     // Normalize to range 0h to 24h
     $gmstNorm = fmod($gmst, 24);
     if ($gmstNorm < 0)
       $gmstNorm += 24;
 
-    return Time::hours($gmstNorm);
+    // Return time in hms format
+    return Time::hours($gmstNorm)->setUnit('hms')->round(3);
   }
 
-  public function gast($location = null) {
-    $gast = $this->gmst()->add(Base::NutationInRA($this));
+  /**
+   * Finds current the Greenwich Apparent Sidereal Time (GAST) at Greenwich. An
+   * optional angle of longitude can be provided which to return the Local
+   * Apparent Sidereal Time (LAST) at the specified geographic longitude.
+   *
+   * @param  Angle $long Geographic longitude; positive West, negative East
+   * @return Time
+   *
+   * @see @see http://aa.usno.navy.mil/faq/docs/GAST.php
+   */
+  public function gast(Angle $long = null) {
+    // Add nutation in right ascension to the GMST of current date
+    $nRA  = Nutation::inRA($this->copy()->toUTC());
+    $gast = $this->gmst()->add($nRA);
 
+    // Adjust to local longitude if provided
+    if ($long)
+      $gast = $gast->toAngle()->add($long)->toTime();
 
-    // Nutation
-    // Precession
-
-    echo 1;
+    // Return time in hms format
+    return $gast->setUnit('hms')->round(3);
   }
 
   // // // Protected
@@ -742,7 +770,7 @@ class AstroDate {
    * @see Meeus, Jean. "Avoiding powers." Astronomical Algorithms. Richmond,
    *          Virg.: Willmann-Bell, 2009. 10-11. Print.
    */
-  public static function horner($x, $c) {
+  protected static function Horner($x, $c) {
     if (count($c) == 0)
       throw new InvalidArgumentException('No coefficients were provided');
 
