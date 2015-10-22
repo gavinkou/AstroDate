@@ -8,7 +8,7 @@
     "packages": [
         {
             "name": "marando/meeus-nutation",
-            "version": "0.2",
+            "version": "0.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/marando/Meeus-Nutation.git",
@@ -21,7 +21,7 @@
                 "shasum": ""
             },
             "require": {
-                "marando/astrodate": "^0.2.2",
+                "marando/astrodate": "^0.2.3",
                 "marando/units": "^0.1.2"
             },
             "require-dev": {
