@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "1874c77748e7e614e7847c99ad55769d",
+    "hash": "c12858d76ed25a1eb421fea5b7227230",
     "packages": [
         {
             "name": "marando/meeus-nutation",
@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/marando/Meeus-Nutation.git",
-                "reference": "c391c4e989cdd4de3ef8e088e7fbe7b38cae3408"
+                "reference": "c947cc18b1a5237ce03b42e64c36ae5f2b0d3409"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marando/Meeus-Nutation/zipball/c391c4e989cdd4de3ef8e088e7fbe7b38cae3408",
-                "reference": "c391c4e989cdd4de3ef8e088e7fbe7b38cae3408",
+                "url": "https://api.github.com/repos/marando/Meeus-Nutation/zipball/c947cc18b1a5237ce03b42e64c36ae5f2b0d3409",
+                "reference": "c947cc18b1a5237ce03b42e64c36ae5f2b0d3409",
                 "shasum": ""
             },
             "require": {
@@ -44,7 +44,7 @@
                 }
             ],
             "description": "A PHP implementation of the Nutation methods discussed in \"Astronomical Algorithms\" by J. Meeus",
-            "time": "2015-10-22 02:34:23"
+            "time": "2015-10-22 19:20:18"
         },
         {
             "name": "marando/units",
