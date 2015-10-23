@@ -3,7 +3,7 @@
   "description": "A PHP Date/Time class with useful Astronomy related functionality ",
   "require": {
     "php": "^5.5",
-    "marando/units": "^0.2.1",
+    "marando/units": "^0.2.2",
     "marando/meeus-nutation": "^0.2.5"
   },
   "require-dev": {
