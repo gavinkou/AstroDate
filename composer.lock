@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "fc8d9d2b493ca7f7c6963f0a60d996aa",
+    "hash": "2a79cd9474614a06f08a2989fceb29e4",
     "packages": [
         {
             "name": "marando/meeus-nutation",
@@ -48,16 +48,16 @@
         },
         {
             "name": "marando/units",
-            "version": "0.3",
+            "version": "0.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/marando/Units.git",
-                "reference": "9ba5486eea7f7e8bd1f6c23385d70a88fffb738b"
+                "reference": "dc4c574430334f4cc6a98ca48e49bf44de717e39"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marando/Units/zipball/9ba5486eea7f7e8bd1f6c23385d70a88fffb738b",
-                "reference": "9ba5486eea7f7e8bd1f6c23385d70a88fffb738b",
+                "url": "https://api.github.com/repos/marando/Units/zipball/dc4c574430334f4cc6a98ca48e49bf44de717e39",
+                "reference": "dc4c574430334f4cc6a98ca48e49bf44de717e39",
                 "shasum": ""
             },
             "require": {
@@ -83,7 +83,7 @@
                 }
             ],
             "description": "A PHP package consisting of classes representing units of measure",
-            "time": "2015-10-24 07:37:36"
+            "time": "2015-10-24 17:10:26"
         }
     ],
     "packages-dev": [
