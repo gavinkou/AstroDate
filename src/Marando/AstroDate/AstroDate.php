@@ -156,6 +156,26 @@ class AstroDate {
     return new static($year, $month, $day, $hour, $min, $sec + $micro);
   }
 
+  /**
+   * Creates a new AstroDate instance
+   *
+   * @param  int          $year  Year
+   * @param  int          $month Month number
+   * @param  int          $day   Day number
+   * @param  int          $hour  Hours
+   * @param  int          $min   Minute
+   * @param  float        $sec   Seconds
+   * @param  string       $tz    UT timezone
+   * @param  TimeStandard $ts    Astronomical time standard, ex. UTC or TDB
+   * @return static
+   */
+  public static function create($year = null, $month = null, $day = null,
+          $hour = null, $min = null, $sec = null, $tz = null,
+          TimeStandard $ts = null) {
+
+    return new static($year, $month, $day, $hour, $min, $sec, $tz, $ts);
+  }
+
   //----------------------------------------------------------------------------
   // Properties
   //----------------------------------------------------------------------------
@@ -568,7 +588,7 @@ class AstroDate {
 
   /**
    * Finds the textual name of this instance's month
-   * 
+   *
    * @param  bool   $full True to show full month name, False for abbreviation
    * @return string
    */
