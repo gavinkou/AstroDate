@@ -538,7 +538,7 @@ class AstroDate {
 
     // Add longitude if provided
     if ($long)
-      $gmst->add($long);
+      $gmst->add($long)->norm(0, 360);
 
     // Return mean sidereal time as hours
     return $gmst->toTime()->setUnit('hours');
@@ -561,7 +561,7 @@ class AstroDate {
 
     // Add longitude if provided
     if ($long)
-      $gast->add($long);
+      $gast->add($long)->norm(0, 360);
 
     // Return mean sidereal time as hours
     return $gast->toTime()->setUnit('hours');
