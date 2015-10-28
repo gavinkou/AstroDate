@@ -4,25 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "2a79cd9474614a06f08a2989fceb29e4",
+    "hash": "1fd431bd19976556f99b7120cdc09d98",
     "packages": [
         {
-            "name": "marando/meeus-nutation",
-            "version": "0.2.6",
+            "name": "marando/php-sofa",
+            "version": "0.1-alpha.2",
             "source": {
                 "type": "git",
-                "url": "https://github.com/marando/Meeus-Nutation.git",
-                "reference": "0b5c7eac9b16102d3e84d5e3e037cf0eb6a88a59"
+                "url": "https://github.com/marando/phpSOFA.git",
+                "reference": "0ec92f99ca5c17d1fc2a796f9b8190dcd520c611"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marando/Meeus-Nutation/zipball/0b5c7eac9b16102d3e84d5e3e037cf0eb6a88a59",
-                "reference": "0b5c7eac9b16102d3e84d5e3e037cf0eb6a88a59",
+                "url": "https://api.github.com/repos/marando/phpSOFA/zipball/0ec92f99ca5c17d1fc2a796f9b8190dcd520c611",
+                "reference": "0ec92f99ca5c17d1fc2a796f9b8190dcd520c611",
                 "shasum": ""
-            },
-            "require": {
-                "marando/astrodate": "^0.2.8",
-                "marando/units": "^0.3"
             },
             "require-dev": {
                 "phpunit/phpunit": "^5.0"
@@ -43,8 +39,8 @@
                     "email": "a.marando@me.com"
                 }
             ],
-            "description": "A PHP implementation of the Nutation methods discussed in \"Astronomical Algorithms\" by J. Meeus",
-            "time": "2015-10-24 08:02:06"
+            "description": "A PHP port of the IAU SOFA Library",
+            "time": "2015-10-28 07:14:54"
         },
         {
             "name": "marando/units",
@@ -1126,9 +1122,11 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "stable",
-    "stability-flags": [],
-    "prefer-stable": false,
+    "minimum-stability": "alpha",
+    "stability-flags": {
+        "marando/php-sofa": 15
+    },
+    "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": "^5.5"

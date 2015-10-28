@@ -20,13 +20,13 @@
 
 namespace Marando\AstroDate;
 
-use \Marando\Meeus\Nutation\Nutation;
 use \DateTime;
 use \Exception;
 use \Marando\AstroDate\TimeStandard;
 use \Marando\Units\Time;
 use \SplFileObject;
 use \Marando\Units\Angle;
+use \Marando\IAU\SOFA;
 
 /**
  * @property string       $era     Era (A.D. / B.C.) of the set date
@@ -522,68 +522,49 @@ class AstroDate {
   }
 
   /**
-   * Finds current the Greenwich Mean Sidereal Time (GMST) at Greenwich. An
-   * optional angle of longitude can be provided which to return the Local Mean
-   * Sidereal Time (LMST) at the specified geographic longitude.
+   * Finds the mean sidereal time at Greenwich, or if provided a local
+   * geographic location
    *
-   * Error should be about 0.432 seconds between 2000 and 2100.
-   *
-   * @param  Angle $long Geographic longitude; positive West, negative East
+   * @param  Angle $long Optional local longitude
    * @return Time
-   *
-   * @see http://aa.usno.navy.mil/faq/docs/GAST.php
    */
   public function gmst(Angle $long = null) {
-    $date = $this->copy()->toUT1();
+    // Get UT1 and TT as JD
+    $ut1 = $this->copy()->toUT1()->jd;
+    $tt  = $this->copy()->toTT()->jd;
 
-    // Current JD as well as JD at 0h
-    $jd   = $date->jd - 2451545.0;
-    $jd0h = $date->copy()->subtract($this->sinceMidnight())->jd - 2451545.0;
+    // Find mean sidereal time at Greenwich
+    $gmst = Angle::rad(SOFA::iauGmst00($ut1, 0, $tt, 0));
 
-    // Hours since midnight
-    $h = $date->sinceMidnight()->hours;
-
-    // Calculate gmst
-    $t    = $jd / 36525;
-    $gmst = 6.697374558 + 0.06570982441908 * $jd0h +
-            1.00273790935 * $h + 0.000026 * $t ** 2;
-
-    // Adjust to local longitude if provided
+    // Add longitude if provided
     if ($long)
-      $gmst = Time::hours($gmst)->toAngle()->add($long)->toTime()->hours;
+      $gmst->add($long);
 
-    // Normalize to range 0h to 24h
-    $gmstNorm = fmod($gmst, 24);
-    if ($gmstNorm < 0)
-      $gmstNorm += 24;
-
-    // Return time in hms format
-    return Time::hours($gmstNorm)->setUnit('hms')->round(3);
+    // Return mean sidereal time as hours
+    return $gmst->toTime()->setUnit('hours');
   }
 
   /**
-   * Finds current the Greenwich Apparent Sidereal Time (GAST) at Greenwich. An
-   * optional angle of longitude can be provided which to return the Local
-   * Apparent Sidereal Time (LAST) at the specified geographic longitude.
+   * Finds the apparent sidereal time at Greenwich, or if provided a local
+   * geographic location
    *
-   * Error should be about 0.432 seconds between 2000 and 2100.
-   *
-   * @param  Angle $long Geographic longitude; positive West, negative East
+   * @param  Angle $long Optional local longitude
    * @return Time
-   *
-   * @see @see http://aa.usno.navy.mil/faq/docs/GAST.php
    */
   public function gast(Angle $long = null) {
-    // Add nutation in right ascension to the GMST of current date
-    $nRA  = Nutation::inRA($this->copy()->toUT1());
-    $gast = $this->gmst()->add($nRA);
+    // Get UT1 and TT as JD
+    $ut1 = $this->copy()->toUT1()->jd;
+    $tt  = $this->copy()->toTT()->jd;
 
-    // Adjust to local longitude if provided
+    // Find apparent sidereal time at Greenwich
+    $gast = Angle::rad(SOFA::iauGst00a($ut1, 0, $tt, 0));
+
+    // Add longitude if provided
     if ($long)
-      $gast = $gast->toAngle()->add($long)->toTime();
+      $gast->add($long);
 
-    // Return time in hms format
-    return $gast->setUnit('hms')->round(3);
+    // Return mean sidereal time as hours
+    return $gast->toTime()->setUnit('hours');
   }
 
   /**
