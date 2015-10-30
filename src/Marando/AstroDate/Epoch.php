@@ -162,12 +162,6 @@ class Epoch {
   protected $jd;
 
   /**
-   * Year of the epoch
-   * @var float
-   */
-  protected $year;
-
-  /**
    * Year type, Julian or Besselian
    * @var YearTYpe
    */
