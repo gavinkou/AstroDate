@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "f895b4fb603ff40a6cefab77be5c6c24",
+    "hash": "a5c37b764146a6d2271803fc2645e944",
     "packages": [
         {
             "name": "marando/php-sofa",
-            "version": "0.1-alpha.3",
+            "version": "0.2-alpha",
             "source": {
                 "type": "git",
                 "url": "https://github.com/marando/phpSOFA.git",
-                "reference": "1f739d32e179a8505536c610d516ed2ff1f78d72"
+                "reference": "6a56150a215b2fcf0febd9294ded73bb99d9dc30"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marando/phpSOFA/zipball/1f739d32e179a8505536c610d516ed2ff1f78d72",
-                "reference": "1f739d32e179a8505536c610d516ed2ff1f78d72",
+                "url": "https://api.github.com/repos/marando/phpSOFA/zipball/6a56150a215b2fcf0febd9294ded73bb99d9dc30",
+                "reference": "6a56150a215b2fcf0febd9294ded73bb99d9dc30",
                 "shasum": ""
             },
             "require-dev": {
@@ -40,7 +40,7 @@
                 }
             ],
             "description": "A PHP port of the IAU SOFA Library",
-            "time": "2015-10-29 05:46:24"
+            "time": "2015-10-30 19:38:37"
         },
         {
             "name": "marando/units",
@@ -1123,9 +1123,7 @@
     ],
     "aliases": [],
     "minimum-stability": "alpha",
-    "stability-flags": {
-        "marando/php-sofa": 15
-    },
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

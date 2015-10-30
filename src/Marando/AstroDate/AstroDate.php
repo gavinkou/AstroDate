@@ -26,7 +26,7 @@ use \Marando\AstroDate\TimeStandard;
 use \Marando\Units\Time;
 use \SplFileObject;
 use \Marando\Units\Angle;
-use \Marando\IAU\SOFA;
+use \Marando\IAU\IAU;
 
 /**
  * @property string       $era     Era (A.D. / B.C.) of the set date
@@ -534,7 +534,7 @@ class AstroDate {
     $tt  = $this->copy()->toTT()->jd;
 
     // Find mean sidereal time at Greenwich
-    $gmst = Angle::rad(SOFA::iauGmst00($ut1, 0, $tt, 0));
+    $gmst = Angle::rad(IAU::Gmst00($ut1, 0, $tt, 0));
 
     // Add longitude if provided
     if ($long)
@@ -557,7 +557,7 @@ class AstroDate {
     $tt  = $this->copy()->toTT()->jd;
 
     // Find apparent sidereal time at Greenwich
-    $gast = Angle::rad(SOFA::iauGst00a($ut1, 0, $tt, 0));
+    $gast = Angle::rad(IAU::Gst00a($ut1, 0, $tt, 0));
 
     // Add longitude if provided
     if ($long)
