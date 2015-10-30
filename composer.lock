@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "1fd431bd19976556f99b7120cdc09d98",
+    "hash": "f895b4fb603ff40a6cefab77be5c6c24",
     "packages": [
         {
             "name": "marando/php-sofa",
@@ -44,16 +44,16 @@
         },
         {
             "name": "marando/units",
-            "version": "0.3.1",
+            "version": "0.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/marando/Units.git",
-                "reference": "dc4c574430334f4cc6a98ca48e49bf44de717e39"
+                "reference": "8f10f2082f4304d573a0a6bd42814faaa4211963"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marando/Units/zipball/dc4c574430334f4cc6a98ca48e49bf44de717e39",
-                "reference": "dc4c574430334f4cc6a98ca48e49bf44de717e39",
+                "url": "https://api.github.com/repos/marando/Units/zipball/8f10f2082f4304d573a0a6bd42814faaa4211963",
+                "reference": "8f10f2082f4304d573a0a6bd42814faaa4211963",
                 "shasum": ""
             },
             "require": {
@@ -79,7 +79,7 @@
                 }
             ],
             "description": "A PHP package consisting of classes representing units of measure",
-            "time": "2015-10-24 17:10:26"
+            "time": "2015-10-30 03:13:52"
         }
     ],
     "packages-dev": [
