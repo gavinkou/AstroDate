@@ -24,7 +24,7 @@ namespace Marando\AstroDate;
  * Represents an astronomical epoch reference point
  *
  * @property float    $jd   Julian day count of the epoch
- * @property int      $year Year of the epoch
+ * @property float    $year Year of the epoch
  * @property YearType $type Year type, Julian or Besselian
  */
 class Epoch {
@@ -163,7 +163,7 @@ class Epoch {
 
   /**
    * Year of the epoch
-   * @var int
+   * @var float
    */
   protected $year;
 
@@ -201,6 +201,10 @@ class Epoch {
 
   // // // Protected
 
+  /**
+   * Finds the year of this epoch
+   * @return float
+   */
   protected function getYear() {
     $year = 0;
     if ($this->type == YearType::Besselian())
