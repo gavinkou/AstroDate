@@ -577,6 +577,14 @@ class AstroDate {
     return static::findMonthName($this->month, $full);
   }
 
+  /**
+   * Converts this instance to an Epoch
+   * @return Epoch
+   */
+  public function toEpoch() {
+    return Epoch::dt($this);
+  }
+
   // // // Protected
 
   /**
