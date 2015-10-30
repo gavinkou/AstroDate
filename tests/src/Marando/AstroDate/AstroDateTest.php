@@ -209,10 +209,8 @@ class AstroDateTest extends \PHPUnit_Framework_TestCase {
    * @covers Marando\AstroDate\AstroDate::toEpoch
    */
   public function testToEpoch() {
-    // Remove the following lines when you implement this test.
-    $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-    );
+    $dt = AstroDate::jd(2451545.0, TimeStandard::TT());
+    $this->AssertEquals(Epoch::J2000(), $dt->toEpoch());
   }
 
   //----------------------------------------------------------------------------
