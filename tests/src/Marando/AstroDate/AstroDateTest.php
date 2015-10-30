@@ -205,12 +205,20 @@ class AstroDateTest extends \PHPUnit_Framework_TestCase {
     $this->assertEquals('Sep', $d->monthName(false), 'short');
   }
 
+  /**
+   * @covers Marando\AstroDate\AstroDate::toEpoch
+   */
+  public function testToEpoch() {
+    $dt = AstroDate::jd(2451545.0, TimeStandard::TT());
+    $this->AssertEquals(Epoch::J2000(), $dt->toEpoch());
+  }
+
   //----------------------------------------------------------------------------
   // Bugs
   //----------------------------------------------------------------------------
 
   public function testBug() {
-return;
+    return;
     // this returns feb-8
     $b = AstroDate::parse('2017-Feb-08');
 
