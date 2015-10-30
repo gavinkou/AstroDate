@@ -4,7 +4,7 @@
   "require": {
     "php": "^5.5",
     "marando/units": "^0.3.2",
-    "marando/php-sofa": "^0.1.0@alpha"
+    "marando/php-sofa": "^0.2"
   },
   "require-dev": {
     "phpunit/phpunit": "^5.0"
