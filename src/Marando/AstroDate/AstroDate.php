@@ -26,6 +26,7 @@ use \Marando\IERS\IERS;
 use \Marando\Units\Time;
 
 /**
+ * @property float $era       Era
  * @property float $year      Year
  * @property float $month     Month
  * @property float $day       Day
@@ -37,6 +38,9 @@ use \Marando\Units\Time;
  * @property float $timescale Astronomical time scale, e.g. UTC, TAI, TT
  */
 class AstroDate {
+
+  use FormatTrait;
+
   //----------------------------------------------------------------------------
   // Constructors
   //----------------------------------------------------------------------------
@@ -116,21 +120,21 @@ class AstroDate {
 
   public static function parse($datetime) {
     // 2015-Nov-16 17:07:07.120 UTC
-    $format1 = '^([0-9]{1,7})-([a-zA-Z]{1,9})-([0-9]{1,2})\s([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2})(\.*[0-9]*)\s*([a-zA-Z]*)$';
+    $format1 = '^([\+\-]*[0-9]{1,7})-([a-zA-Z]{1,9})-([0-9]{1,2})\s([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2})(\.*[0-9]*)\s*([a-zA-Z]*)$';
     if (preg_match("/$format1/", $datetime, $t)) {
       $m  = static::monthNum($t[2]);
       $dt = new AstroDate($t[1], $m, $t[3], $t[4], $t[5], $t[6]);
 
-      $dt->add(Time::sec($t[7]))->timescale = $t[8];
+      $dt->add(Time::sec($t[7])); //->timescale = $t[8];
       return $dt;
     }
 
     // 2015-1-16 17:07:07.120 UTC
-    $format2 = '^([0-9]{1,7})-([0-9]{1,2})-([0-9]{1,2})\s([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2})(\.*[0-9]*)\s*([a-zA-Z]*)$';
+    $format2 = '^([\+\-]*[0-9]{1,7})-([0-9]{1,2})-([0-9]{1,2})\s([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2})(\.*[0-9]*)\s*([a-zA-Z]*)$';
     if (preg_match("/$format2/", $datetime, $t)) {
       $dt = new AstroDate($t[1], $t[2], $t[3], $t[4], $t[5], $t[6]);
 
-      $dt->add(Time::sec($t[7]))->timescale = $t[8];
+      $dt->add(Time::sec($t[7])); //->timescale = $t[8];
       return $dt;
     }
   }
@@ -147,6 +151,9 @@ class AstroDate {
 
   public function __get($name) {
     switch ($name) {
+      case 'era':
+        return $this->year < 1 ? 'B.C.' : 'A.D.';
+
       case 'year':
       case 'month':
       case 'day':
@@ -553,6 +560,8 @@ class AstroDate {
     return ($this->jd + 1.5) % 7;
   }
 
+  // // // Static
+
   protected static function monthNum($month) {
     switch (strtolower(substr($month, 0, 3))) {
       case 'jan':
@@ -582,21 +591,44 @@ class AstroDate {
     }
   }
 
+  protected static function ordinal($number) {
+    $sn = (string)$number;
+
+    if ($number < 11 || $number > 13) {
+      if (substr($sn, strlen($sn) - 1, 1) == 1)
+        return 'st';
+      if (substr($sn, strlen($sn) - 1, 1) == 2)
+        return 'nd';
+      if (substr($sn, strlen($sn) - 1, 1) == 3)
+        return 'rd';
+      else
+        return 'th';
+    }
+    else {
+      return 'th';
+    }
+  }
+
   // // // Overrides
 
   public function __toString() {
+    return $this->format('Y-M-d H:i:s.u T');
+
+
     $ihmsf = [];
     IAU::D2dtf($this->timescale, $this->prec, $this->jd, $this->dayFrac, $iy,
             $im, $id, $ihmsf);
 
-    $date = sprintf("%4d-%s-%02.2d", $iy, $this->monthName(), $id);
+    $date = sprintf("%4d-%s-%02.2d", abs($iy), $this->monthName(), $id);
     $time = sprintf("%02d:%02.2d:%02.2d%s", $ihmsf[0], $ihmsf[1], $ihmsf[2],
             $ihmsf[3] > 0 ? '.' . substr($ihmsf[3], 0, 3) : '');
 
+    $era = $this->era == 'B.C.' ? "$this->era " : '';
+
     if ($this->timescale == TimeScale::UTC())
-      return "$date $time $this->timezone";
+      return "{$era}{$date} $time $this->timezone";
     else
-      return "$date $time $this->timescale";
+      return "{$era}{$date} $time $this->timescale";
   }
 
 }

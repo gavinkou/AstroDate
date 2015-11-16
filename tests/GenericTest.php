@@ -27,16 +27,37 @@ class GenericTest extends PHPUnit_Framework_TestCase {
 
   public function test() {
 
+     echo "\n" . $d = AstroDate::now()->setTimezone(Timezone::EST());
+     echo "\n" . $d->format('');
+     return;
 
-    echo "\n" . $str = '2015-Nov-16 17:07:07.120 UTC';
+
+     $str = '2016-Nov-14 17:07:07.120';
+    echo "\n" . $d   = AstroDate::parse($str);
+    echo "\n" . $d   = AstroDate::parse($str)->setTimezone(Timezone::EST());
+
+
+    echo "\n" . $d->format('Z T P O e u s i h H G g a A y Y n M m F W z D Y-m-d j');
+
+
+        $str = '2016-Nov-14 17:07:07.120 TAI';
+    echo "\n" . $d   = AstroDate::parse($str);
+    echo "\n" . $d->format('O e u s i h H G g a A y Y n M m F W z D Y-m-d j');
+
+
+
+    $str = '2015-Nov-1 17:07:07.120 UTC';
+    $d   = AstroDate::parse($str);
+    echo "\n" . $d->format('z w S N l L D Y-m-d j');
+
+    return;
+    echo "\n\n" . $str = '2015-Nov-16 17:07:07.120 TT';
     echo "\n" . AstroDate::parse($str);
 
-     echo "\n\n" . $str = '2015-Nov-16 17:07:07.120 TT';
-    echo "\n" . AstroDate::parse($str);
 
-
-    echo "\n\n" . $str = '-2015334-1-16 17:07:07 UTC';
-    echo "\n" . AstroDate::parse($str)->toJD(20);
+    echo "\n\n" . $str = '-1950-1-16 17:07:07 UTC';
+    echo "\n" . $d   = AstroDate::parse($str);
+    echo "\n" . $d->format('Y-m-d');
 
 
 
