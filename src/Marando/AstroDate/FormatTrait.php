@@ -23,7 +23,8 @@ namespace Marando\AstroDate;
 trait FormatTrait {
 
   public function format($format) {
-    $str = preg_replace('/([a-zA-Z])/', '%$1', $format);
+    $this->format = $format;
+    $str          = preg_replace('/([a-zA-Z])/', '%$1', $format);
 
     // Day of the month, 2 digits with leading zeros
     if (strstr($str, '%d'))
@@ -38,12 +39,12 @@ trait FormatTrait {
       $str = str_replace('%j', sprintf('%01d', $this->day), $str);
 
     // A full textual uppercase representation of the day of the week
-    if (strstr($str, '%L'))
-      $str = str_replace('%L', $this->dayName(true), $str);
+    if (strstr($str, '%l'))
+      $str = str_replace('%l', $this->dayName(true), $str);
 
     // A full textual lowercase representation of the day of the week
-    if (strstr($str, '%l'))
-      $str = str_replace('%l', strtolower($this->dayName(true)), $str);
+    if (strstr($str, '%L'))
+      $str = str_replace('%L', strtolower($this->dayName(true)), $str);
 
     // ISO-8601 numeric representation of the day of the week 1=Mon, 7=Sun
     if (strstr($str, '%N')) {
@@ -166,6 +167,16 @@ trait FormatTrait {
     // Timezone offset in seconds
     if (strstr($str, '%Z'))
       $str = str_replace('%Z', $this->timezone->offset * 3600, $str);
+
+    // Added for AstroDate
+    // Era, A.D. or B.C.
+    if (strstr($str, '%r'))
+      $str = str_replace('%r', $this->era, $str);
+
+    // Day with fraction
+    if (strstr($str, '%c'))
+      $str = str_replace('%c', round($this->day + $this->dayFrac, 7), $str);
+
 
     return $str;
   }

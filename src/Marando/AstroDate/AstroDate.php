@@ -53,7 +53,11 @@ class AstroDate {
   /**
    * Unix epoch (0h Jan 1, 1970)
    */
-  const UJD = 2440587.5;
+  const UJD             = 2440587.5;
+  ///
+  const FORMAT_GENERIC  = 'Y-M-d H:i:s.u T';
+  const FORMAT_JPL      = 'r Y-M-d H:i:s.u T';
+  const FORMAT_JPL_FRAC = 'r Y-M-c H:i:s.u T';
 
   //----------------------------------------------------------------------------
   // Constructors
@@ -81,6 +85,8 @@ class AstroDate {
       $tzOffset = $this->dstOffset($this->timezone);
       $this->add(Time::hours($tzOffset));
     }
+
+    $this->format = static::FORMAT_JPL_FRAC;
   }
 
   // // // Static
@@ -147,6 +153,7 @@ class AstroDate {
   protected $dayFrac;
   protected $timezone;
   protected $timescale;
+  protected $format;
   protected $prec = 11;
 
   public function __get($name) {
@@ -612,23 +619,7 @@ class AstroDate {
   // // // Overrides
 
   public function __toString() {
-    return $this->format('Y-M-d H:i:s.u T');
-
-
-    $ihmsf = [];
-    IAU::D2dtf($this->timescale, $this->prec, $this->jd, $this->dayFrac, $iy,
-            $im, $id, $ihmsf);
-
-    $date = sprintf("%4d-%s-%02.2d", abs($iy), $this->monthName(), $id);
-    $time = sprintf("%02d:%02.2d:%02.2d%s", $ihmsf[0], $ihmsf[1], $ihmsf[2],
-            $ihmsf[3] > 0 ? '.' . substr($ihmsf[3], 0, 3) : '');
-
-    $era = $this->era == 'B.C.' ? "$this->era " : '';
-
-    if ($this->timescale == TimeScale::UTC())
-      return "{$era}{$date} $time $this->timezone";
-    else
-      return "{$era}{$date} $time $this->timescale";
+    return $this->format($this->format);
   }
 
 }

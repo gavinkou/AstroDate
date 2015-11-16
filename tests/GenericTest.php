@@ -28,7 +28,12 @@ class GenericTest extends PHPUnit_Framework_TestCase {
   public function test() {
 
      echo "\n" . $d = AstroDate::now()->setTimezone(Timezone::EST());
-     echo "\n" . $d->format('');
+     echo "\n" . $d->toTDB();
+
+     echo "\n" . $d->format(DateTime::RSS);
+     echo "\n" . $d;
+     echo "\n" . $d->format(AstroDate::FORMAT_GENERIC);
+
      return;
 
 
