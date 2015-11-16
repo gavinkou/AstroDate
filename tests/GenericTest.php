@@ -27,13 +27,45 @@ class GenericTest extends PHPUnit_Framework_TestCase {
 
   public function test() {
 
+    $d = new AstroDate(2015, 11, 15, 0, 0, 0);
+    echo "\n" . $d;
+    echo "\n" . $d->jd();
+    echo "\n" . $d->jd(12);
+
+    echo "\n" . $d->toTT();
+    echo "\n" . $d->jd();
+    echo "\n" . $d->jd(12);
+
+
+
+
+    echo "\n";
+
+
     $d = new AstroDate(2015, 11, 15, 20, 23, 18, Timezone::EST(),
             TimeScale::TT());
     echo "\n" . $d;
     echo "\n" . $d->setTimezone(Timezone::UTC());
     echo "\n" . $d->toUT1();
     echo "\n" . $d->setTimezone(Timezone::EST());
+    echo "\n" . $d->jd();
+    echo "\n" . $d->jd(12);
+    echo "\n" . $d->mjd();
+    echo "\n" . $d->mjd(12);
+    echo "\n" . $d->monthName();
 
+    echo "\n" . $d->mjd();
+
+    echo "\n\n" . $d->toTAI();
+    echo "\n" . $d->year;
+    echo "\n" . $d->month;
+    echo "\n" . $d->day;
+    echo "\n" . $d->hour;
+    echo "\n" . $d->min;
+    echo "\n" . $d->sec;
+    echo "\n" . $d->micro;
+    echo "\n" . $d->timezone;
+    echo "\n" . $d->timescale;
 
     return;
     $d = new AstroDate(2015, 11, 15, 20, 23, 18.454334);

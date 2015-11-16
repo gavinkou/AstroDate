@@ -25,7 +25,24 @@ use \Marando\IAU\IAU;
 use \Marando\IERS\IERS;
 use \Marando\Units\Time;
 
+/**
+ * @property float $year  Year
+ * @property float $month Month
+ * @property float $day   Day
+ * @property float $hour  Hour
+ * @property float $min   Minute
+ * @property float $sec   Second
+ * @property float $micro Milliseconds
+ * @property float $timezone Timezone
+ * @property float $timescale Astronomical time scale
+ */
 class AstroDate {
+
+  //----------------------------------------------------------------------------
+  // Constructors
+  //----------------------------------------------------------------------------
+
+  const MJD = 2400000.5;
 
   //----------------------------------------------------------------------------
   // Constructors
@@ -40,7 +57,7 @@ class AstroDate {
     if ($this->timescale != TimeScale::UTC())
       $this->timezone = Timezone::UTC();
     else
-      $this->timezone = $timezone;
+      $this->timezone = $timezone ? $timezone : Timezone::UTC();
 
     // Civil date -> JD and fractional day
     $status = IAU::Dtf2d($this->timezone->name, (int)$year, (int)$month,
@@ -60,6 +77,23 @@ class AstroDate {
   protected $dayFrac;
   protected $timezone;
   protected $timescale;
+
+  public function __get($name) {
+    switch ($name) {
+      case 'year':
+      case 'month':
+      case 'day':
+      case 'hour':
+      case 'min':
+      case 'sec':
+      case 'micro':
+        return $this->getComponent($name);
+
+      case 'timezone':
+      case 'timescale':
+        return $this->{$name};
+    }
+  }
 
   //----------------------------------------------------------------------------
   // Functions
@@ -89,6 +123,22 @@ class AstroDate {
 
     $this->timezone = $timezone;
     return $this;
+  }
+
+  public function jd($scale = null) {
+    if ($scale)
+      return bcadd((string)$this->jd, (string)$this->dayFrac, $scale);
+    else
+      return $this->jd + $this->dayFrac;
+  }
+
+  public function mjd($scale = null) {
+    $mjd = static::MJD;
+
+    if ($scale)
+      return bcsub(bcadd($this->jd, $this->dayFrac, $scale), $mjd, $scale);
+    else
+      return $this->jd + $this->dayFrac - $mjd;
   }
 
   public function add(Time $t) {
@@ -147,7 +197,7 @@ class AstroDate {
       return $this;
     }
 
-     if ($this->timescale == TimeScale::UT1()) {
+    if ($this->timescale == TimeScale::UT1()) {
       $ut11 = $this->jd;
       $ut12 = $this->dayFrac;
       $dut1 = IERS::jd($ut11 + $ut12)->dut1();
@@ -211,6 +261,25 @@ class AstroDate {
     return $this;
   }
 
+  public function monthName($full = false) {
+    $months = [
+        [1, 'Jan', 'January'],
+        [2, 'Feb', 'February'],
+        [3, 'Mar', 'March'],
+        [4, 'Apr', 'April'],
+        [5, 'May', 'May'],
+        [6, 'Jun', 'June'],
+        [7, 'Jul', 'July'],
+        [8, 'Aug', 'August'],
+        [9, 'Sep', 'September'],
+        [10, 'Oct', 'October'],
+        [11, 'Nov', 'November'],
+        [12, 'Dec', 'December'],
+    ];
+
+    return $months[$this->month - 1][$full ? 2 : 1];
+  }
+
   // // // Protected
 
   protected function checkDate($status) {
@@ -257,6 +326,35 @@ class AstroDate {
     }
   }
 
+  protected function getComponent($e) {
+    $ihmsf = [];
+    IAU::D2dtf($this->timescale, 14, $this->jd, $this->dayFrac, $iy, $im, $id,
+            $ihmsf);
+
+    switch ($e) {
+      case 'year':
+        return $iy;
+
+      case 'month':
+        return $im;
+
+      case 'day':
+        return $id;
+
+      case 'hour':
+        return $ihmsf[0];
+
+      case 'min':
+        return $ihmsf[1];
+
+      case 'sec':
+        return $ihmsf[2];
+
+      case 'micro':
+        return $ihmsf[3];
+    }
+  }
+
   // // // Overrides
 
   public function __toString() {
@@ -264,7 +362,7 @@ class AstroDate {
     IAU::D2dtf($this->timescale, 14, $this->jd, $this->dayFrac, $iy, $im, $id,
             $ihmsf);
 
-    $date = sprintf("%4d-%02.2d-%02.2d", $iy, $im, $id);
+    $date = sprintf("%4d-%s-%02.2d", $iy, $this->monthName(), $id);
     $time = sprintf("%02d:%02.2d:%02.2d.%03.3d", $ihmsf[0], $ihmsf[1],
             $ihmsf[2], substr($ihmsf[3], 0, 3));
 
