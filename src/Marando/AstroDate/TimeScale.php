@@ -28,6 +28,16 @@ class TimeScale {
     $this->name = $name;
   }
 
+  public static function parse($str) {
+    switch (strtoupper($str)) {
+      case 'UTC':
+        return static::UTC();
+
+      case 'TT':
+        return static::TT();
+    }
+  }
+
   public static function UTC() {
     return new static('UTC');
   }
@@ -42,6 +52,10 @@ class TimeScale {
 
   public static function UT1() {
     return new static('UT1');
+  }
+
+  public static function TDB() {
+    return new static('TDB');
   }
 
   public function __toString() {

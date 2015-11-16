@@ -27,13 +27,64 @@ class GenericTest extends PHPUnit_Framework_TestCase {
 
   public function test() {
 
-    $d = new AstroDate(2015, 11, 15, 0, 0, 0);
+
+    echo "\n" . $str = '2015-Nov-16 17:07:07.120 UTC';
+    echo "\n" . AstroDate::parse($str);
+
+     echo "\n\n" . $str = '2015-Nov-16 17:07:07.120 TT';
+    echo "\n" . AstroDate::parse($str);
+
+
+    echo "\n\n" . $str = '-2015334-1-16 17:07:07 UTC';
+    echo "\n" . AstroDate::parse($str)->toJD(20);
+
+
+
+
+
+
+    return;
+    echo "\n" . $d = AstroDate::now();
+    echo "\n" . $d->toUT1();
+    echo "\n" . $d->toTAI();
+
+    echo "\n\n" . $d = AstroDate::now(Timezone::EST());
+    echo "\n" . $d->toUT1();
+    echo "\n" . $d->toTAI();
+
+
+
+
+    return;
+    $d = new AstroDate(2017, 11, 15, 7, 0, 0);
+    echo "\n" . $d;
+    echo "\n" . $d->setTimezone(Timezone::EST());
+    //var_dump($d);
+
+    $d = new AstroDate(2017, 6, 15, 7, 0, 0);
+    echo "\n\n" . $d;
+    echo "\n" . $d->setTimezone(Timezone::EST());
+    //var_dump($d);
+
+    $d = new AstroDate(2017, 11, 15, 7, 0, 0);
+    echo "\n\n" . $d;
+    echo "\n" . $d->setTimezone(Timezone::EST());
+    //var_dump($d);
+
+    $d = new AstroDate(2017, 6, 15, 6, 0, 0);
+    echo "\n\n" . $d;
+    echo "\n" . $d->setTimezone(Timezone::EST());
+    //var_dump($d);
+
+
+    return;
+    $d = new AstroDate(2017, 11, 15, 0, 0, 0);
     echo "\n" . $d;
     echo "\n" . $d->jd();
     echo "\n" . $d->jd(12);
 
     echo "\n" . $d->toTT();
-    echo "\n" . $d->jd();
+    echo "\n" . $d->toJD();
     echo "\n" . $d->jd(12);
 
 
@@ -67,7 +118,48 @@ class GenericTest extends PHPUnit_Framework_TestCase {
     echo "\n" . $d->timezone;
     echo "\n" . $d->timescale;
 
-    return;
+    $d->year  = 2020;
+    echo "\n" . $d;
+    $d->month = 12.13432;
+    echo "\n" . $d;
+
+    $d->sec = 12;
+    echo "\n" . $d;
+
+    echo "\n" . $d->add(Time::sec(0.5));
+
+
+    echo "\n" . $d->setDateTime(2017, 9, 4, 18, 34, 34.234);
+    var_dump($d->isLeapYear());
+
+    echo "\n" . $d->setDateTime(2016, 9, 4, 18, 34, 34.234);
+    var_dump($d->isLeapYear());
+
+    echo "\n" . $d->dayName();
+
+
+
+    $a = new AstroDate(2016, 12, 25, 19, 10, 2);
+    $b = new AstroDate(2015, 12, 25, 19, 10, 2);
+    echo "\n" . $a->diff($b);
+
+
+    echo "\n" . $a = new AstroDate(2016, 12, 31, 19, 10, 2);
+    echo "\n" . $b = new AstroDate(2015, 12, 31, 19, 10, 2);
+    echo "\n" . $a->dayOfYear();
+    echo "\n" . $b->dayOfYear();
+
+
+
+    echo "\n\n" . $b;
+    echo "\n" . $b->toTDB();
+    echo "\n" . $b->setTimezone(Timezone::UTC());
+    echo "\n" . $b->toTDB();
+    echo "\n" . $b->setTimezone(Timezone::EST());
+    echo "\n" . $b->toTDB();
+
+    echo "\n\n\n";
+
     $d = new AstroDate(2015, 11, 15, 20, 23, 18.454334);
     echo "\n" . $d;
     echo "\n" . $d->setTimezone(Timezone::EST());

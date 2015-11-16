@@ -33,7 +33,7 @@ class Timezone {
   }
 
   public static function UTC() {
-    return new static(0, true, 'UTC');
+    return new static(0, false, 'UTC');
   }
 
   public static function EST() {
