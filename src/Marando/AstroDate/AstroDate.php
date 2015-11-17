@@ -29,15 +29,15 @@ use \Marando\Units\Time;
 /**
  * Represents a date and provides astronomy related functionality
  *
- * @property float $era       Era
- * @property float $year      Year
- * @property float $month     Month
- * @property float $day       Day
- * @property float $hour      Hour
- * @property float $min       Minute
- * @property float $sec       Second
- * @property float $micro     Milliseconds
- * @property TimeZone $timezone  Time zone
+ * @property float     $era       Era
+ * @property float     $year      Year
+ * @property float     $month     Month
+ * @property float     $day       Day
+ * @property float     $hour      Hour
+ * @property float     $min       Minute
+ * @property float     $sec       Second
+ * @property float     $micro     Milliseconds
+ * @property TimeZone  $timezone  Time zone
  * @property TimeScale $timescale Astronomical time scale, e.g. UTC, TAI, TT
  */
 class AstroDate {
@@ -80,7 +80,7 @@ class AstroDate {
   const FORMAT_GOOGLE = 'l, F j, Y g:i A (T)';
 
   /**
-   * Epoch 2010 Jan. 4.0 TT
+   * 2010 Jan. 4.0 TT
    */
   const FORMAT_EPOCH = 'Y M. c T';
 
@@ -88,12 +88,26 @@ class AstroDate {
   // Constructors
   //----------------------------------------------------------------------------
 
+  /**
+   * Creates a new AstroDate
+   *
+   * @param int       $year      Year
+   * @param int       $month     Month
+   * @param int       $day       Day
+   * @param int       $hour      Hour
+   * @param int       $min       Minutes
+   * @param float     $sec       Seconds
+   * @param TimeZone  $timezone  Time zone
+   * @param TimeScale $timescale Astronomical time standard
+   */
   public function __construct($year = null, $month = null, $day = null,
           $hour = null, $min = null, $sec = null, $timezone = null,
           $timescale = null) {
 
+    // Set time scale, default to UTC
     $this->timescale = $timescale ? $timescale : TimeScale::UTC();
 
+    // If time scale is not UTC... set time zone to UTC, otherwise set time zone
     if ($this->timescale != TimeScale::UTC())
       $this->timezone = TimeZone::UTC();
     else
@@ -104,32 +118,50 @@ class AstroDate {
                     (int)$day, (int)$hour, (int)$min, (float)$sec, $this->jd,
                     $this->dayFrac);
 
+    // Verify date is valid (will throw exceptions if not)
     $this->checkDate($status);
 
+    // Add time zone offset
     if ($this->timezone != TimeZone::UTC()) {
       $tzOffset = $this->timezone->offset($this->toJD());
       $this->add(Time::hours($tzOffset));
     }
 
+    // Set default format
     $this->format = static::FORMAT_DEFAULT;
   }
 
   // // // Static
 
+  /**
+   * Creates a new AstroDate from a Julian date
+   *
+   * @param  float     $jd        Julian date
+   * @param  TimeScale $timescale Astronomical time standard, e.g. TAI or TT
+   * @return static
+   */
   public static function jd($jd, TimeScale $timescale = null) {
-    $ihmsf = [];
-    IAU::D2dtf($timescale, 14, $jd, 0, $year, $month, $day, $ihmsf);
+    // JD -> Y-M-D H:M:S.m
+    $t = [];
+    IAU::D2dtf($timescale, 14, $jd, 0, $y, $m, $d, $t);
 
-    return new AstroDate($year, $month, $day, $ihmsf[0], $ihmsf[1], $ihmsf[2],
-            null, $timescale);
+    // Create new instance from date/time components
+    return new static($y, $m, $d, $t[0], $t[1], $t[2], null, $timescale);
   }
 
+  /**
+   * Creates a new AstroDate from a Modified Julian date
+   *
+   * @param  float     $mjd       Modified Julian date
+   * @param  TimeScale $timescale Astronomical time standard, e.g. TAI or TT
+   * @return static
+   */
   public static function mjd($mjd, TimeScale $timescale = null) {
     return static::jd($mjd + static::MJD, $timescale);
   }
 
   /**
-   * Creates a new AstroDate using the current date and time
+   * Creates a new AstroDate from the current date and time
    * @return static
    */
   public static function now(TimeZone $timezone = null) {
@@ -141,31 +173,50 @@ class AstroDate {
     // Compoute JD from unix timestamp
     $jd = ($unix / 86400.0) + static::UJD;
 
-    // Add timezone if present
+    // Add timezone if none present
     if ($timezone == null)
       $timezone = TimeZone::UTC();
 
-    // Return the new date adding the micro portion and setting timezone
+    // Return the new date adding the micro portion and provided timezone
     return static::jd($jd)->add($micro)->setTimezone($timezone);
   }
 
+  /**
+   * Parses a string into a new AstroDate instance
+   * @param  string $datetime String date/time representation
+   * @return static
+   */
   public static function parse($datetime) {
     // 2015-Nov-16 17:07:07.120 UTC
     $format1 = '^([\+\-]*[0-9]{1,7})-([a-zA-Z]{1,9})-([0-9]{1,2})\s([0-9]{1,2}):([0-9]{1,2}):*([0-9]{0,2})(\.*[0-9]*)\s*([a-zA-Z]*)$';
-    if (preg_match("/$format1/", $datetime, $t)) {
+    if (preg_match("/{$format1}/", $datetime, $t)) {
       $m  = static::monthNum($t[2]);
-      $dt = new AstroDate($t[1], $m, $t[3], $t[4], $t[5], $t[6]);
+      $dt = new static($t[1], $m, $t[3], $t[4], $t[5], $t[6]);
+      $dt->add(Time::sec($t[7]));
 
-      $dt->add(Time::sec($t[7])); //->timescale = $t[8];
+      try {
+        $dt->setTimezone($t[8]);
+      }
+      catch (Exception $e) {
+        $dt->timescale = $t[8];
+      }
+
       return $dt;
     }
 
     // 2015-1-16 17:07:07.120 UTC
     $format2 = '^([\+\-]*[0-9]{1,7})-([0-9]{1,2})-([0-9]{1,2})\s([0-9]{1,2}):([0-9]{1,2}):*([0-9]{0,2})(\.*[0-9]*)\s*([a-zA-Z]*)$';
-    if (preg_match("/$format2/", $datetime, $t)) {
-      $dt = new AstroDate($t[1], $t[2], $t[3], $t[4], $t[5], $t[6]);
+    if (preg_match("/{$format2}/", $datetime, $t)) {
+      $dt = new static($t[1], $t[2], $t[3], $t[4], $t[5], $t[6]);
+      $dt->add(Time::sec($t[7]));
 
-      $dt->add(Time::sec($t[7])); //->timescale = $t[8];
+      try {
+        $dt->setTimezone($t[8]);
+      }
+      catch (Exception $e) {
+        $dt->timescale = $t[8];
+      }
+
       return $dt;
     }
   }
@@ -174,18 +225,47 @@ class AstroDate {
   // Properties
   //----------------------------------------------------------------------------
 
+  /**
+   * Julian day count (whole day) ...used as IAU 2 part JD with $dayFrac
+   * @var float
+   */
   protected $jd;
+
+  /**
+   * Fractional day ...used as IAU 2 part JD with $jd
+   * @var float
+   */
   protected $dayFrac;
+
+  /**
+   * Time zone of the instance
+   * @var TimeZone
+   */
   protected $timezone;
 
   /**
-   * The last set timezone, used for when the last timezone is needed when
+   * The last set timezone. Used for when the last timezone is needed when
    * converting from something like TDB back to UTC
    * @var TimeZone
    */
   protected $timezone0;
+
+  /**
+   * Astronomical time scale, e.g. UTC, TAI, TT
+   * @var TimeScale
+   */
   protected $timescale;
+
+  /**
+   * Current toString format
+   * @var string
+   */
   protected $format;
+
+  /**
+   * Decimal precision of this instance (NDP for IAU methods)
+   * @var int
+   */
   protected $prec = 11;
 
   public function __get($name) {
@@ -237,52 +317,89 @@ class AstroDate {
   // Functions
   //----------------------------------------------------------------------------
 
+  /**
+   * Sets the date for this instance
+   *
+   * @param  int    $year  Year
+   * @param  int    $month Month
+   * @param  int    $day   Day
+   * @return static
+   */
   public function setDate($year, $month, $day) {
     $status = IAU::Cal2jd((int)$year, (int)$month, (int)$day, $djm0, $djm);
-    $this->checkDate($status);
+    $this->checkDate($status);  // Check date is valid
 
     $this->jd = $djm0 + $djm;  // Only set JD, keep day frac to save time
     return $this;
   }
 
+  /**
+   * Sets the time of this instance
+   *
+   * @param  int    $hour Hour
+   * @param  int    $min  Minute
+   * @param  float  $sec  Second
+   * @return static
+   */
   public function setTime($hour, $min, $sec) {
-    $status = IAU::Tf2d('+', $hour, $min, $sec, $days);
-    $this->checkTime($status);
+    $status = IAU::Tf2d('+', (int)$hour, (int)$min, (float)$sec, $days);
+    $this->checkTime($status);  // Check time is valid
 
-    $this->dayFrac = $days;
+    $this->dayFrac = $days;  // Only set the day fraction
     return $this;
   }
 
+  /**
+   * Sets the date and time of this instance
+   *
+   * @param  int    $year  Year
+   * @param  int    $month Month
+   * @param  int    $day   Day
+   * @param  int    $hour  Hour
+   * @param  int    $min   Minute
+   * @param  float  $sec   Second
+   * @return static
+   */
   public function setDateTime($year, $month, $day, $hour, $min, $sec) {
     return $this->setDate($year, $month, $day)->setTime($hour, $min, $sec);
   }
 
   /**
+   * Sets the time zone of this instance
    *
-   * @param TimeZone|string $timezone
+   * @param  TimeZone|string $timezone Either a TimeZone instance or string
    * @return static
-   * @throws \InvalidArgumentException
+   *
+   * @throws InvalidArgumentException Occurs if the timezone is an invalid type
    */
   public function setTimezone($timezone) {
+    // Check type, and parse string if present
     if (is_string($timezone))
       $timezone = TimeZone::name($timezone);
-
-    if ($timezone instanceof TimeZone == false)
+    else if ($timezone instanceof TimeZone == false)
       throw new \InvalidArgumentException();
 
+    // Convert back to UTC
     $this->toUTC();
 
-    //$tzOffset = $this->dstOffset($timezone) - $this->dstOffset($this->timezone);
+    // Compute new UTC offset
     $jd       = $this->toJD();
     $tzOffset = $timezone->offset($jd) - $this->timezone->offset($jd);
-
     $this->add(Time::hours($tzOffset));
 
+    // Set the timezone
     $this->timezone  = $timezone;
     $this->timezone0 = $timezone;
+
     return $this;
   }
 
+  /**
+   * Returns a Julian date representation of this instance.
+   *
+   * @param  int          $scale Optional additional decimal precision
+   * @return float|string
+   */
   public function toJD($scale = null) {
     if ($scale)
       return bcadd((string)$this->jd, (string)$this->dayFrac, $scale);
@@ -290,6 +407,12 @@ class AstroDate {
       return $this->jd + $this->dayFrac;
   }
 
+  /**
+   * Returns a Modified Julian date representation of this instance.
+   *
+   * @param  int          $scale Optional additional decimal precision
+   * @return float|string
+   */
   public function toMJD($scale = null) {
     $mjd = static::MJD;
 
@@ -299,6 +422,12 @@ class AstroDate {
       return $this->jd + $this->dayFrac - $mjd;
   }
 
+  /**
+   * Adds a Time interval to this instance
+   *
+   * @param  Time   $t
+   * @return static
+   */
   public function add(Time $t) {
     // Interval to add as days
     $td = $t->days;
@@ -326,10 +455,23 @@ class AstroDate {
     return $this;
   }
 
+  /**
+   * Subtracts a Time interval from this instance
+   *
+   * @param  Time   $t
+   * @return static
+   */
   public function sub(Time $t) {
     return $this->add(Time::sec($t->sec * -1));
   }
 
+  /**
+   * Converts this instance to the Coordinated Universal Time scale (UTC), or
+   * if a time zone was set then that timezone
+   *
+   * @return static
+   * @throws Exception Occurs if UTC cannot be computed
+   */
   public function toUTC() {
     if ($this->timescale == TimeScale::UTC()) {
       // Remove the timezone and set to UTC
@@ -339,6 +481,7 @@ class AstroDate {
       return $this;
     }
 
+    // TAI -> UTC
     if ($this->timescale == TimeScale::TAI()) {
       $tai1 = $this->jd;
       $tai2 = $this->dayFrac;
@@ -350,6 +493,7 @@ class AstroDate {
       return $this;
     }
 
+    // TT -> UTC
     if ($this->timescale == TimeScale::TT()) {
       $tt1 = $this->jd;
       $tt2 = $this->dayFrac;
@@ -362,6 +506,7 @@ class AstroDate {
       return $this;
     }
 
+    // UT1 -> UTC
     if ($this->timescale == TimeScale::UT1()) {
       $ut11 = $this->jd;
       $ut12 = $this->dayFrac;
@@ -374,6 +519,7 @@ class AstroDate {
       return $this;
     }
 
+    // TDB -> UTC
     if ($this->timescale == TimeScale::TDB()) {
       $tt1  = $this->jd;
       $tt2  = $this->dayFrac;
@@ -395,6 +541,10 @@ class AstroDate {
     throw new Exception('Error converting to UTC');
   }
 
+  /**
+   * Converts this instance to International Atomic Time (TAI)
+   * @return static
+   */
   public function toTAI() {
     if ($this->timescale == TimeScale::TAI())
       return $this;
@@ -411,6 +561,10 @@ class AstroDate {
     return $this;
   }
 
+  /**
+   * Converts this instance to Terrestrial Dynamic Time (TT)
+   * @return static
+   */
   public function toTT() {
     if ($this->timescale == TimeScale::TT())
       return $this;
@@ -427,6 +581,10 @@ class AstroDate {
     return $this;
   }
 
+  /**
+   * Converts this instance to Universal Time (UT1)
+   * @return static
+   */
   public function toUT1() {
     if ($this->timescale == TimeScale::UT1())
       return $this;
@@ -444,6 +602,10 @@ class AstroDate {
     return $this;
   }
 
+  /**
+   * Converts this instance to Barycentric Dynamic Time (TDB)
+   * @return static
+   */
   public function toTDB() {
     if ($this->timescale == TimeScale::TDB())
       return $this;
@@ -464,6 +626,12 @@ class AstroDate {
     return $this;
   }
 
+  /**
+   * Finds the month name of this instance
+   *
+   * @param  bool   $full True for full name, false for abbreviation
+   * @return string
+   */
   public function monthName($full = false) {
     $months = [
         [1, 'Jan', 'January'],
@@ -483,11 +651,21 @@ class AstroDate {
     return $months[$this->month - 1][$full ? 2 : 1];
   }
 
+  /**
+   * Returns if this instance is a leap year
+   * @return bool
+   */
   public function isLeapYear() {
     return ($this->year % 4 == 0 && $this->year % 100 != 0) ||
             $this->year % 400 == 0;
   }
 
+  /**
+   * Returns the week day name of this instance
+   *
+   * @param  bool   $full True for full name, false for abbreviation
+   * @return string
+   */
   public function dayName($full = true) {
     $days = [
         [0, 'Sun', 'Sunday'],
@@ -502,6 +680,11 @@ class AstroDate {
     return $days[$this->weekDayNum()][$full ? 2 : 1];
   }
 
+  /**
+   * Finds the difference between this AstroDate and another
+   * @param  AstroDate $b
+   * @return static
+   */
   public function diff(AstroDate $b) {
     $prec = 12;
     $jd1  = $this->jd($prec);
@@ -511,19 +694,23 @@ class AstroDate {
     return Time::days(-1 * $days);
   }
 
+  /**
+   * Returns the day of the year number, 0-356 or 0-366 for leap year
+   * @return int
+   */
   public function dayOfYear() {
     $k = $this->isLeapYear() ? 1 : 2;
-    $n = intval(275 * $this->month / 9) -
-            $k * intval(($this->month + 9) / 12) +
-            $this->day - 30;
+    $n = intval(275 * (int)$this->month / 9) -
+            $k * intval(((int)$this->month + 9) / 12) +
+            (int)$this->day - 30;
 
     return (int)$n;
   }
 
   /**
-   * Finds the sidereal time at the time of this intsance
+   * Finds the sidereal time of this intsance
    *
-   * @param type  $mode Type of sidereal time...  ( a = apparent, m = mean )
+   * @param type  $mode Type of sidereal time... (a = apparent, m = mean)
    * @param Angle $lon  If a longitude is supplied, finds local sidereal time,
    *                    otherwise returns sidereal time at Greenwich
    */
@@ -557,25 +744,39 @@ class AstroDate {
     return $st->setUnit('hours');
   }
 
+  /**
+   * Returns the time elapsed since midnight
+   * @return Time
+   */
   public function sinceMidnight() {
     return Time::days($this->dayFrac)->setUnit('hours');
   }
 
+  /**
+   * Returns the time left until since midnight
+   * @return Time
+   */
   public function untilMidnight() {
     return Time::days(1 - $this->dayFrac)->setUnit('hours');
   }
 
   // // // Protected
 
+  /**
+   * Throws an exception for a provided IAU date error code
+   *
+   * @param  int       $status IAU date error
+   * @throws Exception
+   */
   protected function checkDate($status) {
     switch ($status) {
-      case 3:
+      case 3:  // Ignore dubious year
       //throw new Exception('time is after end of day and dubious year');
 
       case 2:
         throw new Exception('time is after end of day');
 
-      //case 1:
+      //case 1:   // Ignore dubious year
       //throw new Exception('dubious year');
 
       case -1:
@@ -595,9 +796,18 @@ class AstroDate {
 
       case -6:
         throw new Exception('bad second');
+
+      default:
+        return;
     }
   }
 
+  /**
+   * Throws an exception for a provided IAU time error code
+   *
+   * @param  int       $status IAU time error
+   * @throws Exception
+   */
   protected function checkTime($status) {
     switch ($status) {
       case 1:
@@ -608,10 +818,20 @@ class AstroDate {
 
       case 3:
         throw new Exception('sec outside range 0-59.999...');
+
+      default:
+        return;
     }
   }
 
+  /**
+   * Gets a component of this date
+   *
+   * @param  string    $e Component name, e.g. year, month, etc...
+   * @return int|float
+   */
   protected function getComponent($e) {
+    // JD -> Date
     $ihmsf = [];
     IAU::D2dtf($this->timescale, $this->prec, $this->jd, $this->dayFrac, $iy,
             $im, $id, $ihmsf);
@@ -640,12 +860,21 @@ class AstroDate {
     }
   }
 
+  /**
+   * Calculates a number representing the day of the week for this instance
+   * @return int
+   */
   protected function weekDayNum() {
     return ($this->jd + 1.5) % 7;
   }
 
   // // // Static
 
+  /**
+   * Finds the number for a month represented as a string
+   * @param  string $month
+   * @return int
+   */
   protected static function monthNum($month) {
     switch (strtolower(substr($month, 0, 3))) {
       case 'jan':
@@ -675,6 +904,11 @@ class AstroDate {
     }
   }
 
+  /**
+   * Finds the ordinal suffix for a number, e.g. 1st, 2nd, 3rd, etc...
+   * @param  int    $number
+   * @return string
+   */
   protected static function ordinal($number) {
     $sn = (string)$number;
 
@@ -695,6 +929,10 @@ class AstroDate {
 
   // // // Overrides
 
+  /**
+   * Represents this instance as a string with the current format
+   * @return string
+   */
   public function __toString() {
     return $this->format($this->format);
   }
