@@ -195,7 +195,8 @@ class AstroDate {
       $dt->add(Time::sec($t[7]));
 
       try {
-        $dt->setTimezone($t[8]);
+        $dt->timezone  = $t[8];
+        $dt->timescale = TimeScale::UTC();
       }
       catch (Exception $e) {
         $dt->timescale = $t[8];
@@ -211,7 +212,8 @@ class AstroDate {
       $dt->add(Time::sec($t[7]));
 
       try {
-        $dt->setTimezone($t[8]);
+        $dt->timezone  = $t[8];
+        $dt->timescale = TimeScale::UTC();
       }
       catch (Exception $e) {
         $dt->timescale = $t[8];
@@ -833,8 +835,8 @@ class AstroDate {
   protected function getComponent($e) {
     // JD -> Date
     $ihmsf = [];
-    IAU::D2dtf($this->timescale, $this->prec, $this->jd, $this->dayFrac, $iy,
-            $im, $id, $ihmsf);
+    IAU::D2dtf($this->timescale, $this->prec - 1, $this->jd, $this->dayFrac,
+            $iy, $im, $id, $ihmsf);
 
     switch ($e) {
       case 'year':
