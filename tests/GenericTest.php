@@ -1,6 +1,7 @@
 <?php
 
 use \Marando\AstroDate\AstroDate;
+use \Marando\AstroDate\Epoch;
 use \Marando\AstroDate\TimeScale;
 use \Marando\AstroDate\TimeZone;
 use \Marando\Units\Angle;
@@ -28,11 +29,26 @@ class GenericTest extends PHPUnit_Framework_TestCase {
 
   public function test() {
 
+    echo "\n" . Epoch::J2000();
+    echo "\n" . Epoch::J1900();
+    echo "\n" . Epoch::B1950();
+    echo "\n" . Epoch::B1900();
+    echo "\n" . Epoch::B(1954.4423);
+    echo "\n" . Epoch::jd(2455200.5);
 
-    echo "\n" . AstroDate::now();
+    echo "\n\n" . Epoch::J2000()->toDate();
+    echo "\n" . Epoch::J1900()->toDate();
+    echo "\n" . Epoch::B1950()->toDate();
+    echo "\n" . Epoch::B1900()->toDate();
+    echo "\n" . Epoch::B(1954.4423)->toDate();
+
+
+    echo "\n\n" . AstroDate::now();
     echo "\n" . $d = AstroDate::now()->setTimezone(TimeZone::name('EST'));
     echo "\n" . $d->toTDB();
     echo "\n" . $d->toUTC();
+    echo "\n" . $d = AstroDate::now()->setTimezone('MST');
+    echo "\n" . $d = AstroDate::now()->setTimezone('PST');
 
     return;
     echo "\n" . AstroDate::parse('2015-Dec-10 6:00');

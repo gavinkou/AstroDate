@@ -79,6 +79,11 @@ class AstroDate {
    */
   const FORMAT_GOOGLE = 'l, F j, Y g:i A (T)';
 
+  /**
+   * Epoch 2010 Jan. 4.0 TT
+   */
+  const FORMAT_EPOCH = 'Y M. c T';
+
   //----------------------------------------------------------------------------
   // Constructors
   //----------------------------------------------------------------------------
@@ -249,7 +254,19 @@ class AstroDate {
     return $this->setDate($year, $month, $day)->setTime($hour, $min, $sec);
   }
 
-  public function setTimezone(TimeZone $timezone) {
+  /**
+   *
+   * @param TimeZone|string $timezone
+   * @return static
+   * @throws \InvalidArgumentException
+   */
+  public function setTimezone($timezone) {
+    if (is_string($timezone))
+      $timezone = TimeZone::name($timezone);
+
+    if ($timezone instanceof TimeZone == false)
+      throw new \InvalidArgumentException();
+
     $this->toUTC();
 
     //$tzOffset = $this->dstOffset($timezone) - $this->dstOffset($this->timezone);

@@ -418,7 +418,10 @@ trait FormatTrait {
    */
   private function format_c(&$str) {
     if (strstr($str, '%c'))
-      $str = str_replace('%c', round($this->day + $this->dayFrac, 7), $str);
+      if ($this->dayFrac == 0)
+        $str = str_replace('%c', "{$this->day}.0", $str);
+      else
+        $str = str_replace('%c', round($this->day + $this->dayFrac, 7), $str);
   }
 
 }
