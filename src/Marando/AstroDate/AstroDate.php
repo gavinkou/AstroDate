@@ -27,6 +27,8 @@ use \Marando\Units\Angle;
 use \Marando\Units\Time;
 
 /**
+ * Represents a date and provides astronomy related functionality
+ *
  * @property float $era       Era
  * @property float $year      Year
  * @property float $month     Month
@@ -35,8 +37,8 @@ use \Marando\Units\Time;
  * @property float $min       Minute
  * @property float $sec       Second
  * @property float $micro     Milliseconds
- * @property float $timezone  Time zone
- * @property float $timescale Astronomical time scale, e.g. UTC, TAI, TT
+ * @property TimeZone $timezone  Time zone
+ * @property TimeScale $timescale Astronomical time scale, e.g. UTC, TAI, TT
  */
 class AstroDate {
 
@@ -55,11 +57,27 @@ class AstroDate {
   /**
    * Unix epoch (0h Jan 1, 1970)
    */
-  const UJD             = 2440587.5;
-  ///
-  const FORMAT_GENERIC  = 'Y-M-d H:i:s.u T';
-  const FORMAT_JPL      = 'r Y-M-d H:i:s.u T';
-  const FORMAT_JPL_FRAC = 'r Y-M-c H:i:s.u T';
+  const UJD = 2440587.5;
+
+  /**
+   * 2015-Nov-16 17:07:07.120 UTC
+   */
+  const FORMAT_DEFAULT = 'Y-M-d H:i:s.u T';
+
+  /**
+   * A.D. 2015-Nov-03 19:43:43.180 TT
+   */
+  const FORMAT_JPL = 'r Y-M-d H:i:s.u T';
+
+  /**
+   * A.D. 2015-Nov-3.8223053 TT
+   */
+  const FORMAT_JPL_FRAC = 'r Y-M-c T';
+
+  /**
+   * Monday, November 16, 2015 8:20 AM (UTC)
+   */
+  const FORMAT_GOOGLE = 'l, F j, Y g:i A (T)';
 
   //----------------------------------------------------------------------------
   // Constructors
@@ -72,9 +90,9 @@ class AstroDate {
     $this->timescale = $timescale ? $timescale : TimeScale::UTC();
 
     if ($this->timescale != TimeScale::UTC())
-      $this->timezone = Timezone::UTC();
+      $this->timezone = TimeZone::UTC();
     else
-      $this->timezone = $timezone ? $timezone : Timezone::UTC();
+      $this->timezone = $timezone ? $timezone : TimeZone::UTC();
 
     // Civil date -> JD and fractional day
     $status = IAU::Dtf2d($this->timezone->name, (int)$year, (int)$month,
@@ -83,12 +101,12 @@ class AstroDate {
 
     $this->checkDate($status);
 
-    if ($this->timezone != Timezone::UTC()) {
-      $tzOffset = $this->dstOffset($this->timezone);
+    if ($this->timezone != TimeZone::UTC()) {
+      $tzOffset = $this->timezone->offset($this->toJD());
       $this->add(Time::hours($tzOffset));
     }
 
-    $this->format = static::FORMAT_JPL_FRAC;
+    $this->format = static::FORMAT_DEFAULT;
   }
 
   // // // Static
@@ -109,7 +127,7 @@ class AstroDate {
    * Creates a new AstroDate using the current date and time
    * @return static
    */
-  public static function now(Timezone $timezone = null) {
+  public static function now(TimeZone $timezone = null) {
     // Get current time as micro unix timestamp
     $now   = explode(' ', microtime());
     $unix  = $now[1];
@@ -120,7 +138,7 @@ class AstroDate {
 
     // Add timezone if present
     if ($timezone == null)
-      $timezone = Timezone::UTC();
+      $timezone = TimeZone::UTC();
 
     // Return the new date adding the micro portion and setting timezone
     return static::jd($jd)->add($micro)->setTimezone($timezone);
@@ -128,7 +146,7 @@ class AstroDate {
 
   public static function parse($datetime) {
     // 2015-Nov-16 17:07:07.120 UTC
-    $format1 = '^([\+\-]*[0-9]{1,7})-([a-zA-Z]{1,9})-([0-9]{1,2})\s([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2})(\.*[0-9]*)\s*([a-zA-Z]*)$';
+    $format1 = '^([\+\-]*[0-9]{1,7})-([a-zA-Z]{1,9})-([0-9]{1,2})\s([0-9]{1,2}):([0-9]{1,2}):*([0-9]{0,2})(\.*[0-9]*)\s*([a-zA-Z]*)$';
     if (preg_match("/$format1/", $datetime, $t)) {
       $m  = static::monthNum($t[2]);
       $dt = new AstroDate($t[1], $m, $t[3], $t[4], $t[5], $t[6]);
@@ -138,7 +156,7 @@ class AstroDate {
     }
 
     // 2015-1-16 17:07:07.120 UTC
-    $format2 = '^([\+\-]*[0-9]{1,7})-([0-9]{1,2})-([0-9]{1,2})\s([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2})(\.*[0-9]*)\s*([a-zA-Z]*)$';
+    $format2 = '^([\+\-]*[0-9]{1,7})-([0-9]{1,2})-([0-9]{1,2})\s([0-9]{1,2}):([0-9]{1,2}):*([0-9]{0,2})(\.*[0-9]*)\s*([a-zA-Z]*)$';
     if (preg_match("/$format2/", $datetime, $t)) {
       $dt = new AstroDate($t[1], $t[2], $t[3], $t[4], $t[5], $t[6]);
 
@@ -224,10 +242,12 @@ class AstroDate {
     return $this->setDate($year, $month, $day)->setTime($hour, $min, $sec);
   }
 
-  public function setTimezone(Timezone $timezone) {
+  public function setTimezone(TimeZone $timezone) {
     $this->toUTC();
 
-    $tzOffset = $this->dstOffset($timezone) - $this->dstOffset($this->timezone);
+    //$tzOffset = $this->dstOffset($timezone) - $this->dstOffset($this->timezone);
+    $jd = $this->toJD();
+    $tzOffset = $timezone->offset($jd) - $this->timezone->offset($jd);
 
     $this->add(Time::hours($tzOffset));
 
@@ -262,7 +282,7 @@ class AstroDate {
     // Handle the event that the day fraction becomes negative
     if ($dfa < 0) {
       $dfa += 1;
-      $jda += 1;
+      $jda -= 1;
     }
 
     // Additional day to add from above day frac in excess of 1 day
@@ -287,7 +307,7 @@ class AstroDate {
       // Remove the timezone and set to UTC
       $offset         = $this->dstOffset($this->timezone);
       $this->sub(Time::hours($offset));
-      $this->timezone = Timezone::UTC();
+      $this->timezone = TimeZone::UTC();
       return $this;
     }
 
@@ -592,9 +612,9 @@ class AstroDate {
     }
   }
 
-  protected function dstOffset(Timezone $tz) {
+  protected function dstOffset(TimeZone $tz) {
 
-
+return;
     // DST start
     // $md1  = (new AstroDate($this->year, 3, 1));
     // $dst1 = $md1->dayOfYear() + 14 - $md1->weekDayNum() + (2 / 24);

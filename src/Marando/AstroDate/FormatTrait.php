@@ -346,8 +346,10 @@ trait FormatTrait {
    * @param type $str
    */
   private function format_u(&$str) {
-    if (strstr($str, '%u'))
-      $str = str_replace('%u', substr($this->micro, 0, 3), $str);
+    if (strstr($str, '%u')) {
+      $u   = substr($this->micro, 0, 3);
+      $str = str_replace('%u', str_pad($u, 3, '0', STR_PAD_LEFT), $str);
+    }
   }
 
   /**

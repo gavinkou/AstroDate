@@ -2,7 +2,7 @@
 
 use \Marando\AstroDate\AstroDate;
 use \Marando\AstroDate\TimeScale;
-use \Marando\AstroDate\Timezone;
+use \Marando\AstroDate\TimeZone;
 use \Marando\Units\Angle;
 use \Marando\Units\Time;
 
@@ -28,10 +28,52 @@ class GenericTest extends PHPUnit_Framework_TestCase {
 
   public function test() {
 
-    $d = AstroDate::now()->setTimezone(Timezone::EST());
+    echo "\n" . AstroDate::parse('2015-Dec-10 6:00');
+    echo "\n" . AstroDate::parse('2015-Dec-10 6:00')->setTimezone(TimeZone::name('EST'));
+
+
+    echo "\n" . AstroDate::now();
+    echo "\n" . AstroDate::now()->setTimezone(TimeZone::name('EST'));
+    echo "\n" . AstroDate::now()->setTimezone(TimeZone::name('PST'));
+    echo "\n" . AstroDate::now()->setTimezone(TimeZone::UT(6));
+
+    echo "\n" . TimeZone::name('est')->offset;
+    echo "\n" . TimeZone::name('est')->offset(2451545.5);
+    echo "\n" . TimeZone::name('est')->offset(2451589.5);
+
+    return;
+    echo "\n" . TimeZone::UT(-2);
+    echo "\n" . TimeZone::name('EST');
+
+    echo "\n" . AstroDate::now()
+            ->setTimezone(TimeZone::EST())
+            ->format(AstroDate::FORMAT_GOOGLE);
+
+    echo "\n" . AstroDate::now()
+            ->setTimezone(TimeZone::UT(-10.5))
+            ->format(AstroDate::FORMAT_GOOGLE);
+
+
+    echo "\n" . AstroDate::now()
+            ->setTimezone(TimeZone::UT(-10))
+            ->format(AstroDate::FORMAT_GOOGLE);
+
+    return;
+
+    $t = timezone_abbreviations_list();
+    $s = timezone_identifiers_list();
+    $e = timezone_name_from_abbr('est');
+
+    var_dump($t);
+    return;
+
+
+    $d = AstroDate::now()->setTimezone(TimeZone::EST());
     echo "\n" . $d->format('r Y-M-c h:i:s.u A T');
+    echo "\n" . $d->sub(Time::days(15))->format(AstroDate::FORMAT_GENERIC);
     echo "\n" . $d->sidereal('a');
     echo "\n" . $d->sidereal('m');
+    echo "\n" . $d->format(AstroDate::FORMAT_JPL_FRAC);
 
     echo "\n" . $d->sidereal('a', Angle::deg(-82.47));
     echo "\n" . $d->sidereal('m', Angle::deg(-82.47));
@@ -39,6 +81,14 @@ class GenericTest extends PHPUnit_Framework_TestCase {
     echo "\n" . $d->sinceMidnight();
     echo "\n" . $d->untilMidnight();
 
+    /**
+     * TODO:
+     *
+     *    - Figure out formula for DST start and end
+     *    - Figure out formula for Week # of year
+     *
+     *
+     */
     return;
     echo "\n" . $d->format(DateTime::RSS);
     echo "\n" . $d;
@@ -50,7 +100,7 @@ class GenericTest extends PHPUnit_Framework_TestCase {
 
     $str = '2016-Nov-14 17:07:07.120';
     echo "\n" . $d   = AstroDate::parse($str);
-    echo "\n" . $d   = AstroDate::parse($str)->setTimezone(Timezone::EST());
+    echo "\n" . $d   = AstroDate::parse($str)->setTimezone(TimeZone::EST());
 
 
     echo "\n" . $d->format('Z T P O e u s i h H G g a A y Y n M m F W z D Y-m-d j');
@@ -85,7 +135,7 @@ class GenericTest extends PHPUnit_Framework_TestCase {
     echo "\n" . $d->toUT1();
     echo "\n" . $d->toTAI();
 
-    echo "\n\n" . $d = AstroDate::now(Timezone::EST());
+    echo "\n\n" . $d = AstroDate::now(TimeZone::EST());
     echo "\n" . $d->toUT1();
     echo "\n" . $d->toTAI();
 
@@ -95,22 +145,22 @@ class GenericTest extends PHPUnit_Framework_TestCase {
     return;
     $d = new AstroDate(2017, 11, 15, 7, 0, 0);
     echo "\n" . $d;
-    echo "\n" . $d->setTimezone(Timezone::EST());
+    echo "\n" . $d->setTimezone(TimeZone::EST());
     //var_dump($d);
 
     $d = new AstroDate(2017, 6, 15, 7, 0, 0);
     echo "\n\n" . $d;
-    echo "\n" . $d->setTimezone(Timezone::EST());
+    echo "\n" . $d->setTimezone(TimeZone::EST());
     //var_dump($d);
 
     $d = new AstroDate(2017, 11, 15, 7, 0, 0);
     echo "\n\n" . $d;
-    echo "\n" . $d->setTimezone(Timezone::EST());
+    echo "\n" . $d->setTimezone(TimeZone::EST());
     //var_dump($d);
 
     $d = new AstroDate(2017, 6, 15, 6, 0, 0);
     echo "\n\n" . $d;
-    echo "\n" . $d->setTimezone(Timezone::EST());
+    echo "\n" . $d->setTimezone(TimeZone::EST());
     //var_dump($d);
 
 
@@ -130,12 +180,12 @@ class GenericTest extends PHPUnit_Framework_TestCase {
     echo "\n";
 
 
-    $d = new AstroDate(2015, 11, 15, 20, 23, 18, Timezone::EST(),
+    $d = new AstroDate(2015, 11, 15, 20, 23, 18, TimeZone::EST(),
             TimeScale::TT());
     echo "\n" . $d;
-    echo "\n" . $d->setTimezone(Timezone::UTC());
+    echo "\n" . $d->setTimezone(TimeZone::UTC());
     echo "\n" . $d->toUT1();
-    echo "\n" . $d->setTimezone(Timezone::EST());
+    echo "\n" . $d->setTimezone(TimeZone::EST());
     echo "\n" . $d->jd();
     echo "\n" . $d->jd(12);
     echo "\n" . $d->mjd();
@@ -190,19 +240,19 @@ class GenericTest extends PHPUnit_Framework_TestCase {
 
     echo "\n\n" . $b;
     echo "\n" . $b->toTDB();
-    echo "\n" . $b->setTimezone(Timezone::UTC());
+    echo "\n" . $b->setTimezone(TimeZone::UTC());
     echo "\n" . $b->toTDB();
-    echo "\n" . $b->setTimezone(Timezone::EST());
+    echo "\n" . $b->setTimezone(TimeZone::EST());
     echo "\n" . $b->toTDB();
 
     echo "\n\n\n";
 
     $d = new AstroDate(2015, 11, 15, 20, 23, 18.454334);
     echo "\n" . $d;
-    echo "\n" . $d->setTimezone(Timezone::EST());
+    echo "\n" . $d->setTimezone(TimeZone::EST());
     echo "\n" . $d->toUTC();
     echo "\n" . $d->toTAI();
-    echo "\n" . $d->setTimezone(Timezone::EST());
+    echo "\n" . $d->setTimezone(TimeZone::EST());
     echo "\n" . $d->toTT();
 
 
@@ -212,12 +262,12 @@ class GenericTest extends PHPUnit_Framework_TestCase {
     $d = new AstroDate(2015, 11, 15, 20, 23, 18.454334);
     echo "\n" . $d;
 
-    $d = new AstroDate(2015, 11, 15, 20, 23, 18.454334, Timezone::EST());
+    $d = new AstroDate(2015, 11, 15, 20, 23, 18.454334, TimeZone::EST());
     echo "\n" . $d;
     echo "\n" . $d->setDate(2020, 10, 2);
     echo "\n" . $d->setTime(23, 59, 1);
-    echo "\n" . $d->setTimezone(Timezone::UTC());
-    echo "\n" . $d->setTimezone(Timezone::EST());
+    echo "\n" . $d->setTimezone(TimeZone::UTC());
+    echo "\n" . $d->setTimezone(TimeZone::EST());
   }
 
 }
