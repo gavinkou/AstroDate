@@ -20,6 +20,8 @@
 
 namespace Marando\AstroDate;
 
+use \Exception;
+
 /**
  * Represents an astronomical time scale, e.g. TDB, TT, TAI, etc...
  *
@@ -57,7 +59,8 @@ class TimeScale {
         return new static($str);
 
       default:
-        throw new Exception("Unable to parse time standard {$str}");
+        return new static('UTC');
+        //throw new Exception("Unable to parse time standard '{$str}'");
     }
   }
 

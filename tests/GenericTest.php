@@ -29,14 +29,24 @@ class GenericTest extends PHPUnit_Framework_TestCase {
 
   public function test() {
 
-    echo "\n" . AstroDate::parse('2015-Dec-11 04:33:14 EST');
-    echo "\n" . AstroDate::parse('2015-dec-11 04:33:14 TT');
+    // Converts to J2000.0
+    echo "\n" . AstroDate::parse('2000-Jan-1 12:00:00 TT')->toEpoch();
+
+    // Isn't J2000.0 so represented as date
+    echo "\n" . $e = AstroDate::parse('2000-Jan-1 14:00:00 TT')->toEpoch();
+    echo "\n\n" . AstroDate::now()->toEpoch();
+    $d = AstroDate::now()->setTimezone('est');
+
+    echo "\n\n". $d->sinceMidnight();
+
+    echo "\n\n";
+
 
     return;
     echo "\n" . $d = AstroDate::now()->setTimezone(TimeZone::UT(-7));
 
-    echo "\n" .TimeScale::TT()->abr;
-    echo "\n" .TimeScale::TT()->name;
+    echo "\n" . TimeScale::TT()->abr;
+    echo "\n" . TimeScale::TT()->name;
 
 
     echo "\n" . Epoch::J2000();

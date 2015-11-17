@@ -195,11 +195,12 @@ class AstroDate {
       $dt->add(Time::sec($t[7]));
 
       try {
-        $dt->timezone  = $t[8];
+        $dt->timezone  = TimeZone::name($t[8]);
         $dt->timescale = TimeScale::UTC();
       }
       catch (Exception $e) {
-        $dt->timescale = $t[8];
+        $dt->timescale = TimeScale::parse($t[8]);
+        $dt->timezone  = TimeZone::UTC();
       }
 
       return $dt;
@@ -212,11 +213,12 @@ class AstroDate {
       $dt->add(Time::sec($t[7]));
 
       try {
-        $dt->timezone  = $t[8];
+        $dt->timezone  = TimeZone::name($t[8]);
         $dt->timescale = TimeScale::UTC();
       }
       catch (Exception $e) {
-        $dt->timescale = $t[8];
+        $dt->timescale = TimeScale::parse($t[8]);
+        $dt->timezone  = TimeZone::UTC();
       }
 
       return $dt;
@@ -626,6 +628,14 @@ class AstroDate {
     $this->dayFrac   = $tdb2;
     $this->timescale = TimeScale::TDB();
     return $this;
+  }
+
+  /**
+   * Converts this instance to an Epoch
+   * @return Epoch
+   */
+  public function toEpoch() {
+    return Epoch::dt($this->copy());
   }
 
   /**
