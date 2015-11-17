@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (C) 2015 ashley
+ * Copyright (C) 2015 Ashley Marando
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -43,7 +43,7 @@ use \Marando\Units\Time;
 class AstroDate {
 
   use \Marando\Units\Traits\CopyTrait,
-      FormatTrait;
+      \Marando\AstroDate\Traits\FormatTrait;
 
   //----------------------------------------------------------------------------
   // Constructors

@@ -29,6 +29,12 @@ class GenericTest extends PHPUnit_Framework_TestCase {
 
   public function test() {
 
+    echo "\n" . $d = AstroDate::now()->setTimezone(TimeZone::UT(-7));
+
+    echo "\n" .TimeScale::TT()->abr;
+    echo "\n" .TimeScale::TT()->name;
+
+
     echo "\n" . Epoch::J2000();
     echo "\n" . Epoch::J1900();
     echo "\n" . Epoch::B1950();

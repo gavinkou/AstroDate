@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (C) 2015 ashley
+ * Copyright (C) 2015 Ashley Marando
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,22 +21,55 @@
 namespace Marando\AstroDate;
 
 /**
- * Represents a year type, ex. Julian or Besselian
+ * Represents a year type, as in Julian or Besselian
+ * @property float $days Number of days in the year
  */
 class YearType {
+  //----------------------------------------------------------------------------
+  // Constructors
+  //----------------------------------------------------------------------------
 
-  public $days;
-
-  protected function __construct($value) {
-    $this->days = $value;
+  /**
+   * Creates a new YearType from a number of days
+   * @param float $days
+   */
+  protected function __construct($days) {
+    $this->days = $days;
   }
 
+  // // // Static
+
+  /**
+   * Represents a Julian year (365.25 days)
+   * @return static
+   */
   public static function Julian() {
     return new static(365.25);
   }
 
+  /**
+   * Represents a Besselian year (365.2421988 days)
+   * @return static
+   */
   public static function Besselian() {
-    return new static(365.2421988);
+    return new static(365.242198781);
+  }
+
+  //----------------------------------------------------------------------------
+  // Functions
+  //----------------------------------------------------------------------------
+
+  /**
+   * Number of days per the year
+   * @var float
+   */
+  protected $days;
+
+  public function __get($name) {
+    switch ($name) {
+      case 'days':
+        return $this->{$name};
+    }
   }
 
 }
