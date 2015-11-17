@@ -23,6 +23,7 @@ namespace Marando\AstroDate;
 use \Exception;
 use \Marando\IAU\IAU;
 use \Marando\IERS\IERS;
+use \Marando\Units\Angle;
 use \Marando\Units\Time;
 
 /**
@@ -39,7 +40,8 @@ use \Marando\Units\Time;
  */
 class AstroDate {
 
-  use FormatTrait;
+  use \Marando\Units\Traits\CopyTrait,
+      FormatTrait;
 
   //----------------------------------------------------------------------------
   // Constructors
@@ -226,6 +228,7 @@ class AstroDate {
     $this->toUTC();
 
     $tzOffset = $this->dstOffset($timezone) - $this->dstOffset($this->timezone);
+
     $this->add(Time::hours($tzOffset));
 
     $this->timezone = $timezone;
@@ -467,6 +470,51 @@ class AstroDate {
             $this->day - 30;
 
     return (int)$n;
+  }
+
+  /**
+   * Finds the sidereal time at the time of this intsance
+   *
+   * @param type  $mode Type of sidereal time...  ( a = apparent, m = mean )
+   * @param Angle $lon  If a longitude is supplied, finds local sidereal time,
+   *                    otherwise returns sidereal time at Greenwich
+   */
+  public function sidereal($mode = 'a', Angle $lon = null) {
+    // Get UT1 time
+    $ut  = $this->copy()->toUT1();
+    $uta = $ut->jd;
+    $utb = $ut->dayFrac;
+    $ut  = null;
+
+    // Get TT time
+    $tt  = $this->copy()->toTT();
+    $tta = $tt->jd;
+    $ttb = $tt->dayFrac;
+    $tt  = null;
+
+    // Compute either GMST or GAST
+    $st;
+    if ($mode == 'a')
+      $strad = IAU::Gst06a($uta, $utb, $tta, $ttb);
+    else
+      $strad = IAU::Gmst06($uta, $utb, $tta, $ttb);
+
+    // Add longitude if relevant
+    if ($lon)
+      $st = Angle::rad($strad)->add($lon)->norm()->toTime();
+    else
+      $st = Angle::rad($strad)->toTime();
+
+    // Return as hours
+    return $st->setUnit('hours');
+  }
+
+  public function sinceMidnight() {
+    return Time::days($this->dayFrac)->setUnit('hours');
+  }
+
+  public function untilMidnight() {
+    return Time::days(1 - $this->dayFrac)->setUnit('hours');
   }
 
   // // // Protected

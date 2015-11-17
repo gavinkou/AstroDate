@@ -3,6 +3,7 @@
 use \Marando\AstroDate\AstroDate;
 use \Marando\AstroDate\TimeScale;
 use \Marando\AstroDate\Timezone;
+use \Marando\Units\Angle;
 use \Marando\Units\Time;
 
 /*
@@ -27,18 +28,27 @@ class GenericTest extends PHPUnit_Framework_TestCase {
 
   public function test() {
 
-     echo "\n" . $d = AstroDate::now()->setTimezone(Timezone::EST());
-     echo "\n" . $d->toTDB();
+    $d = AstroDate::now()->setTimezone(Timezone::EST());
+    echo "\n" . $d->format('r Y-M-c h:i:s.u A T');
+    echo "\n" . $d->sidereal('a');
+    echo "\n" . $d->sidereal('m');
 
-     echo "\n" . $d->format(DateTime::RSS);
-     echo "\n" . $d;
-     echo "\n" . $d->format(AstroDate::FORMAT_GENERIC);
-     echo "\n" . $d->format(DateTime::ISO8601);
+    echo "\n" . $d->sidereal('a', Angle::deg(-82.47));
+    echo "\n" . $d->sidereal('m', Angle::deg(-82.47));
 
-     return;
+    echo "\n" . $d->sinceMidnight();
+    echo "\n" . $d->untilMidnight();
+
+    return;
+    echo "\n" . $d->format(DateTime::RSS);
+    echo "\n" . $d;
+    echo "\n" . $d->format(AstroDate::FORMAT_GENERIC);
+    echo "\n" . $d->format(DateTime::ISO8601);
+
+    return;
 
 
-     $str = '2016-Nov-14 17:07:07.120';
+    $str = '2016-Nov-14 17:07:07.120';
     echo "\n" . $d   = AstroDate::parse($str);
     echo "\n" . $d   = AstroDate::parse($str)->setTimezone(Timezone::EST());
 
@@ -46,7 +56,7 @@ class GenericTest extends PHPUnit_Framework_TestCase {
     echo "\n" . $d->format('Z T P O e u s i h H G g a A y Y n M m F W z D Y-m-d j');
 
 
-        $str = '2016-Nov-14 17:07:07.120 TAI';
+    $str = '2016-Nov-14 17:07:07.120 TAI';
     echo "\n" . $d   = AstroDate::parse($str);
     echo "\n" . $d->format('O e u s i h H G g a A y Y n M m F W z D Y-m-d j');
 
