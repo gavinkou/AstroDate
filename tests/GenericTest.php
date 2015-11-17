@@ -33,6 +33,7 @@ class GenericTest extends PHPUnit_Framework_TestCase {
      echo "\n" . $d->format(DateTime::RSS);
      echo "\n" . $d;
      echo "\n" . $d->format(AstroDate::FORMAT_GENERIC);
+     echo "\n" . $d->format(DateTime::ISO8601);
 
      return;
 
