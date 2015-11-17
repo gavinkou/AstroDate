@@ -254,9 +254,13 @@ class AstroDate {
 
     // Days (jda) and day fraction (dfa) to add
     $jda = intval($td);
-
-    //$dfa = $dfa = $this->dayFrac + $td - $jda;
     $dfa = $this->dayFrac + $td - $jda;
+
+    // Handle the event that the day fraction becomes negative
+    if ($dfa < 0) {
+      $dfa += 1;
+      $jda += 1;
+    }
 
     // Additional day to add from above day frac in excess of 1 day
     $jda1 = intval($dfa);
