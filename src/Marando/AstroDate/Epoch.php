@@ -228,7 +228,8 @@ class Epoch {
         $epoch = $this->toDate()->format(AstroDate::FORMAT_EPOCH);
     }
 
-    return "Epoch $epoch";
+    //return "Epoch $epoch";
+    return $epoch;
   }
 
 }

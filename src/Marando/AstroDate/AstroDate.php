@@ -205,6 +205,9 @@ class AstroDate {
       case 'timezone':
       case 'timescale':
         return $this->{$name};
+
+      default:
+        throw new Exception("{$name} is not a valid or public property");
     }
   }
 
