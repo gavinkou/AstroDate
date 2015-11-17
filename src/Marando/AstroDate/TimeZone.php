@@ -26,9 +26,9 @@ use \Marando\IAU\IAU;
 
 class TimeZone {
 
-  public $offset;
-  public $dst;
-  public $name;
+  //----------------------------------------------------------------------------
+  // Constructors
+  //----------------------------------------------------------------------------
 
   public function __construct($offset, $dst = true, $name = null) {
     $this->offset = $offset;
@@ -36,18 +36,37 @@ class TimeZone {
     $this->name   = $name;
   }
 
-  protected static function dayOfYear($y, $m, $d) {
-    $l = ($y % 4 == 0 && $y % 100 != 0) || $y % 400 == 0;
-    $k = $l ? 1 : 2;
-    $n = intval(275 * $m / 9) - $k * intval(($m + 9) / 12) + $d - 30;
+  // // // Static
 
-    return $n;
+  public static function UT($offset, $dst = true) {
+    return new static($offset, $dst);
   }
 
-  protected static function weekDayNum($jd) {
-    return ($jd + 1.5) % 7;
+  public static function name($name) {
+    // Use PHP DateTimeZone
+    $dtz = new DateTimeZone($name);
+    $dt  = new DateTime('2000-01-01');
+    $dst = true;
+
+    //                // Offset in hours                 // TZ name
+    return new static($dtz->getOffset($dt) / 3600, $dst, $dtz->getName());
   }
 
+  public static function UTC() {
+    return new static(0, false, 'UTC');
+  }
+
+  //----------------------------------------------------------------------------
+  // Properties
+  //----------------------------------------------------------------------------
+
+  public $offset;
+  public $dst;
+  public $name;
+
+  //----------------------------------------------------------------------------
+  // Functions
+  //----------------------------------------------------------------------------
   public function offset($jd) {
     // Is DST observed for this timezone? If no, return offset as is
     if ($this->dst == false)
@@ -73,25 +92,21 @@ class TimeZone {
       return $this->offset;
   }
 
-  public static function UT($offset, $dst = true) {
-    return new static($offset, $dst);
+  // // // Protected
+
+  protected static function dayOfYear($y, $m, $d) {
+    $l = ($y % 4 == 0 && $y % 100 != 0) || $y % 400 == 0;
+    $k = $l ? 1 : 2;
+    $n = intval(275 * $m / 9) - $k * intval(($m + 9) / 12) + $d - 30;
+
+    return $n;
   }
 
-  public static function name($name) {
-    // Use PHP DateTimeZone
-    $dtz = new DateTimeZone($name);
-    $dt  = new DateTime('2000-01-01');
-
-    // Get offset and time zone name
-    $offset = $dtz->getOffset($dt) / 3600;
-    $abr    = $dtz->getName();
-
-    return new static($offset, true, $abr);
+  protected static function weekDayNum($jd) {
+    return ($jd + 1.5) % 7;
   }
 
-  public static function UTC() {
-    return new static(0, false, 'UTC');
-  }
+// // // Overrides
 
   public function __toString() {
     if ($this->name)

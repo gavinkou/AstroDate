@@ -172,6 +172,13 @@ class AstroDate {
   protected $jd;
   protected $dayFrac;
   protected $timezone;
+
+  /**
+   * The last set timezone, used for when the last timezone is needed when
+   * converting from something like TDB back to UTC
+   * @var TimeZone
+   */
+  protected $timezone0;
   protected $timescale;
   protected $format;
   protected $prec = 11;
@@ -246,12 +253,13 @@ class AstroDate {
     $this->toUTC();
 
     //$tzOffset = $this->dstOffset($timezone) - $this->dstOffset($this->timezone);
-    $jd = $this->toJD();
+    $jd       = $this->toJD();
     $tzOffset = $timezone->offset($jd) - $this->timezone->offset($jd);
 
     $this->add(Time::hours($tzOffset));
 
-    $this->timezone = $timezone;
+    $this->timezone  = $timezone;
+    $this->timezone0 = $timezone;
     return $this;
   }
 
@@ -305,9 +313,9 @@ class AstroDate {
   public function toUTC() {
     if ($this->timescale == TimeScale::UTC()) {
       // Remove the timezone and set to UTC
-      $offset         = $this->dstOffset($this->timezone);
+      $offset         = $this->timezone->offset($this->toJD());
       $this->sub(Time::hours($offset));
-      $this->timezone = TimeZone::UTC();
+      $this->timezone = $this->timezone0 ? $this->timezone0 : TimeZone::UTC();
       return $this;
     }
 
@@ -610,29 +618,6 @@ class AstroDate {
       case 'micro':
         return $ihmsf[3];
     }
-  }
-
-  protected function dstOffset(TimeZone $tz) {
-
-return;
-    // DST start
-    // $md1  = (new AstroDate($this->year, 3, 1));
-    // $dst1 = $md1->dayOfYear() + 14 - $md1->weekDayNum() + (2 / 24);
-    // DST end
-    //$nd1  = (new AstroDate($this->year, 11, 1));
-    //$dst2 = $nd1->dayOfYear() + 14 - $nd1->weekDayNum() + (2 / 24);
-    $dst1 = 40;
-    $dst2 = 300;
-
-    $dyf = $this->dayOfYear() + $this->dayFrac;
-
-    if ($tz->dst)
-      if ($dyf >= $dst1 && $dyf < $dst2)
-        return $tz->offset + 1;
-      else
-        return $tz->offset;
-    else
-      return $tz->offset;
   }
 
   protected function weekDayNum() {
