@@ -124,8 +124,8 @@ class AstroDate {
 
     // Add time zone offset
     if ($this->timezone != TimeZone::UTC()) {
-      $tzOffset = $this->timezone->offset($this->toJD());
-      $this->add(Time::hours($tzOffset));
+      //$tzOffset = $this->timezone->offset($this->toJD());
+      //$this->add(Time::hours($tzOffset));
     }
 
     // Set default format
