@@ -20,23 +20,52 @@
 
 namespace Marando\AstroDate;
 
-/**
- * Represents an astronomical time standard such as TT or TDB
- */
-class TimeStandard {
+use \Exception;
 
+/**
+ * Represents an astronomical time scale, e.g. TDB, TT, TAI, etc...
+ *
+ * @property string $name Time scale name
+ * @property string $abr  Time scale abbreviation
+ */
+class TimeScale {
   //----------------------------------------------------------------------------
   // Constructors
   //----------------------------------------------------------------------------
 
-  public function __construct($value) {
-    $this->value = $value;
+  /**
+   * Creates a new TimeScale from an abbreviation
+   * @param type $abr
+   */
+  protected function __construct($abr) {
+    $this->abr  = $abr;
+    $this->name = $this->names[$abr];  // Lookup full name
   }
 
   // // // Static
 
   /**
-   * Coordinated Universal Time (UTC)
+   * Parses a time standard from a string value
+   * @param  string $str
+   * @return static
+   */
+  public static function parse($str) {
+    switch (strtoupper($str)) {
+      case 'TAI':
+      case 'TDB':
+      case 'TT':
+      case 'UT1':
+      case 'UTC':
+        return new static($str);
+
+      default:
+        return new static('UTC');
+        //throw new Exception("Unable to parse time standard '{$str}'");
+    }
+  }
+
+  /**
+   * Represents Coordinated Universal Time
    * @return static
    */
   public static function UTC() {
@@ -44,7 +73,7 @@ class TimeStandard {
   }
 
   /**
-   * International Atomic Time (TAI)
+   * Represents International Atomic Time
    * @return static
    */
   public static function TAI() {
@@ -52,7 +81,7 @@ class TimeStandard {
   }
 
   /**
-   * Terrestrial Dynamic Time (TT or TDT)
+   * Represents Terrestrial Dynamic Time (TT)
    * @return static
    */
   public static function TT() {
@@ -60,7 +89,15 @@ class TimeStandard {
   }
 
   /**
-   * Barycentric Dynamic Time (TDB)
+   * Universal Time
+   * @return static
+   */
+  public static function UT1() {
+    return new static('UT1');
+  }
+
+  /**
+   * Represents Barycentric Dynamic Time (TDB)
    * @return static
    */
   public static function TDB() {
@@ -72,22 +109,47 @@ class TimeStandard {
   //----------------------------------------------------------------------------
 
   /**
-   * Value of this instance
+   * Time scale abbreviation, e.g. TDB
    * @var string
    */
-  protected $value;
+  protected $abr;
+
+  /**
+   * Time scale full name
+   * @var string
+   */
+  protected $name;
+
+  /**
+   * An array of time scale abbreviations and full names
+   * @var array
+   */
+  protected $names = [
+      'TAI' => 'International Atomic Time',
+      'TDB' => 'Barycentric Dynamic Time',
+      'TT'  => 'Terrestrial Dynamic Time',
+      'UT1' => 'Universal Time',
+      'UTC' => 'Coordinated Universal Time',
+  ];
+
+  public function __get($name) {
+    switch ($name) {
+      case 'abr':
+      case 'name':
+        return $this->{$name};
+    }
+  }
 
   //----------------------------------------------------------------------------
   // Functions
   //----------------------------------------------------------------------------
-  // // // Overrides
 
   /**
    * Represents this instance as a string
    * @return string
    */
   public function __toString() {
-    return (string)$this->value;
+    return $this->abr;
   }
 
 }
