@@ -1,16 +1,25 @@
 AstroDate
 =========
-AstroDate is a PHP date/time library that also provides useful astronomy related functionality.
-
+AstroDate is a PHP date/time library that also provides useful astronomy related functionality. 
 
 
 Installation
 ------------
-### With Composer
-
+The package can be installed with `composer` using the following vendor/package name:
 ```
 $ composer require marando/astrodate
 ```
+
+Package Classes
+---------------
+
+ Class       | Description
+-------------|---------------------------------------------
+ `AstroDate` | Represents a Date/Time
+ `Epoch`     | Represents an Epoch (e.g. J2000.0)
+ `TimeScale` | Represents a time scale (such as TT or TAI)
+ `TimeZone`  | Represents a UTC time zone 
+ `YearType`  | Represents a YearType (Julian/Besselian)
 
 
 AstroDate Usage
