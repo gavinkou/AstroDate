@@ -363,6 +363,44 @@ The `AstroDate` class provides a few default formats:
 Epoch Usage
 -----------
 
+### Creation
+
+#### Predefined Epochs
+```php
+Epoch::J2000();
+Epoch::B1950();
+Epoch::J1900();
+Epoch::B1900();
+Epoch::JMod();
+```
+
+#### Julian Epoch of Given Year
+```php
+Epoch::J(2015);
+```
+
+#### Besselian Epoch of Given Year
+```php
+Epoch::B(1940);
+```
+
+#### From JD
+You can create an `Epoch` from a Julian date as shown:
+```php
+Epoch::jd(2451545);       // Result: J2000.0
+Epoch::jd(2457548.2934);  // Result: 2016 Jun. 8.7933912 TT
+```
+
+#### From an `AstroDate` Instance
+```php
+Epoch::dt(AstroDate::now());
+```
+```
+2015 Nov. 18.2479013 TT
+```
+
+
+
 
 
 
