@@ -100,6 +100,11 @@ trait FormatTrait {
     $this->formatO($format);
     $this->formatP($format);
     $this->formatZ($format);
+
+    ///////////
+    // OTHER //
+    ///////////
+
     $this->format_r($format);
     $this->format_c($format);
 

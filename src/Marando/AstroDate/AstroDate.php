@@ -184,9 +184,10 @@ class AstroDate {
 
   /**
    * Creates a new AstroDate from the current date and time
+   * @param  TimeZone|string $timezone
    * @return static
    */
-  public static function now(TimeZone $timezone = null) {
+  public static function now($timezone = null) {
     // Get current time as micro unix timestamp
     $now   = explode(' ', microtime());
     $unix  = $now[1];
@@ -198,6 +199,8 @@ class AstroDate {
     // Add timezone if none present
     if ($timezone == null)
       $timezone = TimeZone::UTC();
+    if (is_string($timezone))
+      $timezone = TimeZone::parse($timezone);
 
     // Return the new date adding the micro portion and provided timezone
     return static::jd($jd)->add($micro)->setTimezone($timezone);
