@@ -1,7 +1,7 @@
 AstroDate
 =========
-
 AstroDate is a PHP date/time library that also provides useful astronomy related functionality.
+
 
 
 Installation
@@ -132,17 +132,33 @@ Results:
 ```
 You can also use the `setDate()`, `setTime()` and `setDateTime()` methods for writing to properties
 
-### Converting to Another Time Zone or Time Standard
 
-#### Converting to Another Time Zone
+### Converting to Another Time Zone
+```php
+$d = AstroDate::now();
+$d->setTimezone('EST');
+$d->setTimezone('UT+04:30');
+```
+```
+2015-Nov-18 05:38:44.877 UTC
+2015-Nov-18 00:38:44.877 EST
+2015-Nov-18 10:08:44.877 UT+04:30
+```
 
-#### Converting to Coordinated Universal Time (UTC)
+### Converting to Astronomical Time Scales
+```php
+$d = AstroDate::now();
+$d->toTAI();
+$d->toTT();
+$d->toTDB();
+```
+```
+2015-Nov-18 05:41:11.621 UTC
+2015-Nov-18 05:41:47.621 TAI
+2015-Nov-18 05:42:19.805 TT
+2015-Nov-18 05:42:19.804 TDB
+```
 
-#### International Atomic Time (TAI)
-
-#### Terrestrial Dynamic Time (TT or TDT)
-
-#### Barycentric Dynamic Time (TDB)
 
 ### Sidereal Time
 #### Sidereal Time at Greenwich
