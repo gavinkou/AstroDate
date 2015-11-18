@@ -96,6 +96,19 @@ Results:
 ```
 By default the dates are returned in the Terrestrial Time scale but they can be converted to another time scale using one of the appropriate methods that will be discussd further below. Also, the current method for Equinox or Solstice calculation employed is of lower accuracy, and a higher algorithm is expected to be implemented in the future.
 
+### Converting to Another Time Zone or Time Standard
+
+#### Converting to Another Time Zone
+
+#### Converting to Coordinated Universal Time (UTC)
+
+#### International Atomic Time (TAI)
+
+#### Terrestrial Dynamic Time (TT or TDT)
+
+#### Barycentric Dynamic Time (TDB)
+
+
 ### Date & Time Property Components
 Each instance has the following properties:
 
@@ -130,29 +143,6 @@ Results:
 2015-Nov-10 23:17:43.750 UTC
 ```
 You can also use the `setDate()`, `setTime()` and `setDateTime()` methods for writing to properties
-
-#### Leap Year
-You can get if a year is a leap year or not from the `isLeapYear()` function:
-```php
-$d1 = AstroDate::create(2015, 11, 10)->isLeapYear();
-$d2 = AstroDate::create(2016, 11, 10)->isLeapYear();
-
-var_dump($d1);
-var_dump($d2);
-```
-```
-bool(false)
-bool(true)
-```
-#### Day of the Year
-The day number out of the year can be returned as follows:
-```php
-AstroDate::create(2015, 11, 10, 9)->dayOfYear()
-```
-```
-Results:
-314
-```
 
 ### Mathematical Operations
 
@@ -210,6 +200,29 @@ AstroDate::create(2015, 11, 10, 14, 25, 12)->untilMidnight();
 Results:
 14.42 hours
 9.58 hours
+```
+
+### Leap Year
+You can get if a year is a leap year or not from the `isLeapYear()` function:
+```php
+$d1 = AstroDate::create(2015, 11, 10)->isLeapYear();
+$d2 = AstroDate::create(2016, 11, 10)->isLeapYear();
+
+var_dump($d1);
+var_dump($d2);
+```
+```
+bool(false)
+bool(true)
+```
+### Day of the Year
+The day number out of the year can be returned as follows:
+```php
+AstroDate::create(2015, 11, 10, 9)->dayOfYear()
+```
+```
+Results:
+314
 ```
 
 ### Formatting Date/Time Strings
@@ -301,17 +314,6 @@ The `AstroDate` class provides a few default formats:
 
 
 
-### Converting to Another Time Zone or Time Standard
-
-#### Converting to Another Time Zone
-
-#### Converting to Coordinated Universal Time (UTC)
-
-#### International Atomic Time (TAI)
-
-#### Terrestrial Dynamic Time (TT or TDT)
-
-#### Barycentric Dynamic Time (TDB)
 
 
 
