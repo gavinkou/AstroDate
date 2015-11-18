@@ -1,14 +1,19 @@
 AstroDate
 =========
-AstroDate is a PHP date/time library that also provides useful astronomy related functionality such as conversion between astronomical time standards, and the calculation of Julian dates to name just a few features. The package provides the following classes:
 
- Class       | Description
--------------|---------------------------------------------
- `AstroDate` | Represents a Date/Time
- `Epoch`     | Represents an Epoch (e.g. J2000.0)
- `TimeScale` | Represents a time scale (such as TT or TAI)
- `TimeZone`  | Represents a UTC time zone 
- `YearType`  | Represents a YearType (Julian/Besselian)
+AstroDate is a PHP date/time library that also provides useful astronomy related functionality such as conversion between astronomical time standards, and the calculation of Julian dates to name just a few features. 
+
+The package provides the following classes:
+
+  Class       | Description
+ -------------|---------------------------------------------
+  `AstroDate` | Represents a Date/Time
+  `Epoch`     | Represents an Epoch (e.g. J2000.0)
+  `TimeScale` | Represents a time scale (such as TT or TAI)
+  `TimeZone`  | Represents a UTC time zone 
+  `YearType`  | Represents a YearType (Julian/Besselian)
+
+
 
 Contents
 --------
@@ -17,20 +22,25 @@ Contents
 3. [Epoch Usage](https://github.com/marando/AstroDate/blob/dev/README.md#epoch-usage)
 
 
+
 Installation
 ------------
-The package can be installed with `composer` using the following vendor/package name:
+`AstroDate` can be installed with `composer` like so:
 ```
 $ composer require marando/astrodate
 ```
 
 
 
+
 AstroDate Class
 ===============
+The `AstroDate` class represents a date/time combination.
 
 
 ### Creating Instances
+`AstroDate` instances can be created in a variety of ways…
+
 #### Default Constructor
 To create a new instance from a date and optional time you can use the `create()` static constructor which is an alias of the default constructor:
 ```php
@@ -38,6 +48,7 @@ AstroDate::create(2015, 11, 15);
 AstroDate::create(2015, 11, 15, 2, 35, 10);
 ```
 ```
+Results:
 2015-Nov-15 00:00:00.000 UTC
 2015-Nov-15 02:35:10.000 UTC
 ```
@@ -47,6 +58,7 @@ AstroDate::create(2015, 11, 15, 2, 35, 10, TimeZone::parse('EST'));
 AstroDate::create(2015, 11, 15, 2, 35, 10, null, $ts = TimeScale::TT());
 ```
 ```
+Results:
 2015-Nov-14 02:35:10.000 EST
 2015-Nov-15 02:35:10.000 TT
 ```
@@ -57,10 +69,11 @@ AstroDate::parse('2015-Nov-15 5:45:10 EST');
 AstroDate::parse('2015-Nov-15 5:45:10 TT');
 ```
 ```
+Results:
 2015-Nov-15 05:45:10.000 EST
 2015-Nov-15 05:45:10.000 TT
 ```
-Currently only a few formats are supported, but more will be added in the future.
+Currently only a few formats are supported, and more will be added in the future.
 
 #### Current Time
 The `now()` method will return the current time and accepts an optional timezone:
@@ -69,9 +82,11 @@ AstroDate::now();
 AstroDate::now('EST');
 ```
 ```
+Results:
 2015-Nov-18 04:35:42.308 UTC
 2015-Nov-17 23:35:42.308 EST
 ```
+
 #### Creation from JD and MJD
 Creation from Julian and Modified Julian dates can be done as follows:
 ```php
@@ -79,15 +94,17 @@ AstroDate::jd(2451545.5);
 AstroDate::mjd(57482.03847);
 ```
 ```
+Results:
 2000-Jan-02 00:00:00.000 UTC
 2016-Apr-04 00:55:23.000 UTC
 ```
-And like above you can specify an optional time standard as follows:
+And as above you can specify an optional time standard as follows:
 ```php
 AstroDate::jd(2451545.5, TimeScale::TT());
 AstroDate::mjd(57482.03847, TimeScale::TT());
 ```
 ```
+Results:
 2000-Jan-02 00:00:00.000 TT
 2016-Apr-04 00:55:23.000 TT
 ```
@@ -107,11 +124,11 @@ Results:
 2020-Sep-22 13:32:01.000 TT
 2020-Dec-21 10:04:00.000 TT
 ```
-By default the dates are returned in the Terrestrial Time scale but they can be converted to another time scale using one of the appropriate methods that will be discussd further below. Also, the current method for Equinox or Solstice calculation employed is of lower accuracy, and a higher algorithm is expected to be implemented in the future.
+By default the Equinox/Solstice dates are returned in the Terrestrial Time scale but they can be converted to another time scale using one of the appropriate conversion methods that will be discussd further later. Also, the current method for Equinox or Solstice calculation employed is of lower accuracy, and a higher algorithm is expected to be implemented in the future.
 
 
 ### Date & Time Property Components
-Each instance has the following properties:
+Each `AstroDate` instance has the following properties:
 
 ```php
 $d = AstroDate::create(2015, 11, 10, 9, 17, 43.750);
@@ -132,7 +149,7 @@ $d->era;        // A.D.
 $d->timezone;   // UTC
 $d->timescale;  // UTC
 ```
-Each property is also writable:
+The properties is also writable:
 ```php
 print AstroDate::create(2015, 11, 10, 9, 17, 43.750);
 $d->hour = 23;
@@ -147,18 +164,30 @@ You can also use the `setDate()`, `setTime()` and `setDateTime()` methods for wr
 
 
 ### Converting to Another Time Zone
+An instance be converted to a different time zone by either specifying the time zone abbreviation, or a UTC offset:
 ```php
 $d = AstroDate::now();
-$d->setTimezone('EST');
-$d->setTimezone('UT+04:30');
+$d->setTimezone('EST');       // Eastern Standard Time
+$d->setTimezone('UT+04:30');  // UTC +4 hours 30 minutes
 ```
 ```
+Results:
 2015-Nov-18 05:38:44.877 UTC
 2015-Nov-18 00:38:44.877 EST
 2015-Nov-18 10:08:44.877 UT+04:30
 ```
 
 ### Converting to Astronomical Time Scales
+One of the most powerful features of the `AstroDate` class is it's ability to convert between astronomical time scales. Following time scales are supported:
+
+     | Description
+-----|---------------------------
+ TAI | International Atomic Time
+ TT  | Terrestrial Dynamic Time
+ TDB | Barycentric Dynamic Time
+
+Time scale conversions are calculated using adapted versions of the algorithms provided by the International Astronomical Union's SOFA library along with data obtained from The International Earth Rotation and Reference Systems Service.
+
 ```php
 $d = AstroDate::now();
 $d->toTAI();
