@@ -1,13 +1,20 @@
 AstroDate
 =========
-AstroDate is a PHP date/time library that also provides useful astronomy related functionality. 
+AstroDate is a PHP date/time library that also provides useful astronomy related functionality. The package provides the following classes:
+
+ Class       | Description
+-------------|---------------------------------------------
+ `AstroDate` | Represents a Date/Time
+ `Epoch`     | Represents an Epoch (e.g. J2000.0)
+ `TimeScale` | Represents a time scale (such as TT or TAI)
+ `TimeZone`  | Represents a UTC time zone 
+ `YearType`  | Represents a YearType (Julian/Besselian)
 
 Contents
 --------
 1. [Installation](https://github.com/marando/AstroDate/blob/dev/README.md#installation)
-2. [Package Classes](https://github.com/marando/AstroDate/blob/dev/README.md#package-classes)
-3. [AstroDate Usage](https://github.com/marando/AstroDate/blob/dev/README.md#astrodate-usage)
-4. [Epoch Usage](https://github.com/marando/AstroDate/blob/dev/README.md#epoch-usage)
+2. [AstroDate Usage](https://github.com/marando/AstroDate/blob/dev/README.md#astrodate-usage)
+3. [Epoch Usage](https://github.com/marando/AstroDate/blob/dev/README.md#epoch-usage)
 
 
 Installation
@@ -17,16 +24,6 @@ The package can be installed with `composer` using the following vendor/package 
 $ composer require marando/astrodate
 ```
 
-Package Classes
----------------
-
- Class       | Description
--------------|---------------------------------------------
- `AstroDate` | Represents a Date/Time
- `Epoch`     | Represents an Epoch (e.g. J2000.0)
- `TimeScale` | Represents a time scale (such as TT or TAI)
- `TimeZone`  | Represents a UTC time zone 
- `YearType`  | Represents a YearType (Julian/Besselian)
 
 
 AstroDate Usage
