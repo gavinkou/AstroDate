@@ -1,6 +1,6 @@
 AstroDate
 =========
-AstroDate is a PHP date/time library that also provides useful astronomy related functionality. The package provides the following classes:
+AstroDate is a PHP date/time library that also provides useful astronomy related functionality such as conversion between astronomical time standards, and the calculation of Julian dates to name just a few features. The package provides the following classes:
 
  Class       | Description
 -------------|---------------------------------------------
