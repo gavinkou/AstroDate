@@ -23,8 +23,8 @@ To create a new instance from a date and optional time you can use the `create()
 ```php
 AstroDate::create(2015, 11, 15);
 AstroDate::create(2015, 11, 15, 2, 35, 10);
-
-Results:
+```
+```
 2015-Nov-15 00:00:00.000 UTC
 2015-Nov-15 02:35:10.000 UTC
 ```
@@ -32,8 +32,8 @@ If you wish you can also supply a time zone or time scale (such as TT) as follow
 ```php
 AstroDate::create(2015, 11, 15, 2, 35, 10, TimeZone::parse('EST'));
 AstroDate::create(2015, 11, 15, 2, 35, 10, null, $ts = TimeScale::TT());
-
-Results:
+```
+```
 2015-Nov-14 02:35:10.000 EST
 2015-Nov-15 02:35:10.000 TT
 ```
@@ -42,8 +42,8 @@ You can parse a date/time string using the `parse()` static constructor:
 ```php
 AstroDate::parse('2015-Nov-15 5:45:10 EST');
 AstroDate::parse('2015-Nov-15 5:45:10 TT');
-
-Results:
+```
+```
 2015-Nov-15 05:45:10.000 EST
 2015-Nov-15 05:45:10.000 TT
 ```
@@ -54,8 +54,8 @@ The `now()` method will return the current time and accepts an optional timezone
 ```php
 AstroDate::now();
 AstroDate::now('EST');
-
-Results:
+```
+```
 2015-Nov-18 04:35:42.308 UTC
 2015-Nov-17 23:35:42.308 EST
 ```
@@ -64,8 +64,8 @@ Creation from Julian and Modified Julian dates can be done as follows:
 ```php
 AstroDate::jd(2451545.5);
 AstroDate::mjd(57482.03847);
-
-Results:
+```
+```
 2000-Jan-02 00:00:00.000 UTC
 2016-Apr-04 00:55:23.000 UTC
 ```
@@ -73,8 +73,8 @@ And like above you can specify an optional time standard as follows:
 ```php
 AstroDate::jd(2451545.5, TimeScale::TT());
 AstroDate::mjd(57482.03847, TimeScale::TT());
-
-Results:
+```
+```
 2000-Jan-02 00:00:00.000 TT
 2016-Apr-04 00:55:23.000 TT
 ```
