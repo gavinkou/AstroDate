@@ -4,7 +4,7 @@ AstroDate is a PHP date/time library that also provides useful astronomy related
 
 Contents
 --------
-1. Installation
+1. [Installation](https://github.com/marando/AstroDate/blob/dev/README.md#installation)
 2. Package Classes
 3. AstroDate Usage
 4. Epoch Usage
