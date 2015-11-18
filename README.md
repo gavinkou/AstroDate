@@ -168,6 +168,28 @@ $d->toTDB();
 2015-Nov-18 05:42:19.804 TDB
 ```
 
+### To Julian Date
+```php
+$d = AstroDate::create(2015, 12, 10, 11, 15, 35.125);
+$d->toJD();   // Julian Date
+$d->toMJD();  // Modified Julian Date
+```
+```php
+2457366.9691565
+57366.46915654
+```
+Since PHP's float object has a finite precision you can pass a precision and the JD will be computed further and returned as a string:
+```php
+$d = AstroDate::create(2015, 12, 10, 11, 15, 35.125);
+$d->toJD(15);
+$d->toMJD(15);
+```
+```
+2457366.969156539351850
+  57366.469156539351850
+```
+
+
 
 ### Sidereal Time
 #### Sidereal Time at Greenwich
