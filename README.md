@@ -178,7 +178,9 @@ Results:
 ```
 
 ### Converting to Astronomical Time Scales
-One of the most powerful features of the `AstroDate` class is it's ability to convert between astronomical time scales. Following time scales are supported:
+One of the most powerful features of the `AstroDate` class is it's ability to convert between astronomical time scales. Time scale conversions are calculated using adapted versions of the algorithms provided by the International Astronomical Union's SOFA library along with data obtained from The International Earth Rotation and Reference Systems Service.
+
+The Following time scales are supported:
 
      | Description
 -----|---------------------------
@@ -186,7 +188,7 @@ One of the most powerful features of the `AstroDate` class is it's ability to co
  TT  | Terrestrial Dynamic Time
  TDB | Barycentric Dynamic Time
 
-Time scale conversions are calculated using adapted versions of the algorithms provided by the International Astronomical Union's SOFA library along with data obtained from The International Earth Rotation and Reference Systems Service.
+Conversion can be done as follows:
 
 ```php
 $d = AstroDate::now();
@@ -195,6 +197,7 @@ $d->toTT();
 $d->toTDB();
 ```
 ```
+Results:
 2015-Nov-18 05:41:11.621 UTC
 2015-Nov-18 05:41:47.621 TAI
 2015-Nov-18 05:42:19.805 TT
@@ -202,12 +205,14 @@ $d->toTDB();
 ```
 
 ### To Julian Date
+To get the Julian or Modified Julian date of an instance, use the following two methods:
 ```php
 $d = AstroDate::create(2015, 12, 10, 11, 15, 35.125);
 $d->toJD();   // Julian Date
 $d->toMJD();  // Modified Julian Date
 ```
-```php
+```
+Results:
 2457366.9691565
 57366.46915654
 ```
@@ -218,19 +223,20 @@ $d->toJD(15);
 $d->toMJD(15);
 ```
 ```
+Results:
 2457366.969156539351850
   57366.469156539351850
 ```
 
-
-
 ### Sidereal Time
+`AstroDate` can also compute both apparent and mean sidereal times for local longitudes as well as at Greenwich.
 #### Sidereal Time at Greenwich
 ```php
 AstroDate::now()->sidereal('a');  // Apparent sidereal time
 AstroDate::now()->sidereal('m');  // Mean sidereal time
 ```
 ```
+Results:
 9.323 hours
 9.324 hours
 ```
@@ -241,11 +247,13 @@ AstroDate::now()->sidereal('a', Angle::deg(-90));
 AstroDate::now()->sidereal('m', Angle::deg(-90));
 ```
 ```
+Results:
 3.361 hours
 3.361 hours
 ```
 
 ### Mathematical Operations
+Addition and subtraction of a time interval can be performed on an `AstroDate` instance:
 #### Adding/Subtracting a Time Duration
 ```php
 print AstroDate::create(2015, 11, 20, 9, 17, 43.750);
@@ -258,6 +266,7 @@ Results:
 2015-Nov-10 09:17:43.750 UTC
 ```
 #### Difference Between Two Dates
+To find the time interval between two dates:
 ```php
 print $d1 = AstroDate::create(2015, 11, 10);
 print $d2 = AstroDate::create(2020, 11, 10);
@@ -270,6 +279,8 @@ Results:
 1827 days
 ```
 ### Day and Month Names
+Either the short or long version of the month and day can be obtained using the following two methods
+
 #### Day Name
 ```php
 AstroDate::create(2015, 11, 10)->dayName();
@@ -292,6 +303,7 @@ November
 ```
 
 ### Time Since and Until Midnight
+Time elapsed since and time left until midnight can be found like so:
 ```php
 AstroDate::create(2015, 11, 10, 14, 25, 12)->sinceMidnight();
 AstroDate::create(2015, 11, 10, 14, 25, 12)->untilMidnight();
@@ -303,7 +315,7 @@ Results:
 ```
 
 ### Leap Year
-You can get if a year is a leap year or not from the `isLeapYear()` function:
+You can get if a given year is a leap year or not from the `isLeapYear()` function:
 ```php
 $d1 = AstroDate::create(2015, 11, 10)->isLeapYear();
 $d2 = AstroDate::create(2016, 11, 10)->isLeapYear();
@@ -326,15 +338,16 @@ Results:
 ```
 
 ### Formatting Date/Time Strings
-Instances can be converted to whatever format you wish using the standard PHP format Date & Time characters. For example:
+Instances can also be converted to any format you wish using the standard PHP format Date & Time characters. So for example:
 
 ```php
 AstroDate::now()->format('Y-M-d H:m:s');
 ```
 ```
+Result:
 2015-Nov-18 05:11:24
 ```
-The `AstroDate` class provides a few default formats:
+The `AstroDate` class provides a few default format constants:
 
  Constant Name    | Format            | Example
 ------------------|-------------------|------------------------------
@@ -342,7 +355,7 @@ The `AstroDate` class provides a few default formats:
  `FORMAT_JPL`     | `r Y-M-c T`       | A.D. 2015-Nov-18.2187713 UTC
  `FORMAT_EPOCH`   | `Y M. c T`        | 2015 Nov. 18.2187717 UTC
 
-…but you can use whatevr format you want with the following format codes:
+…but you can use whatever format you want using the following format codes:
 
 ##### Day
 
