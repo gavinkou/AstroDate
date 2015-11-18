@@ -27,9 +27,9 @@ use \Marando\Units\Angle;
 use \Marando\Units\Time;
 
 /**
- * Represents a date and provides astronomy related functionality
+ * Represents a date/time and provides astronomy related functionality
  *
- * @property float     $era       Era
+ * @property float     $era       Era, e.g. A.D or B.C.
  * @property float     $year      Year
  * @property float     $month     Month
  * @property float     $day       Day
@@ -135,6 +135,27 @@ class AstroDate {
   // // // Static
 
   /**
+   * Creates a new AstroDate
+   *
+   * @param  int       $year      Year
+   * @param  int       $month     Month
+   * @param  int       $day       Day
+   * @param  int       $hour      Hour
+   * @param  int       $min       Minutes
+   * @param  float     $sec       Seconds
+   * @param  TimeZone  $timezone  Time zone
+   * @param  TimeScale $timescale Astronomical time standard
+   * @return static
+   */
+  public static function create($year = null, $month = null, $day = null,
+          $hour = null, $min = null, $sec = null, $timezone = null,
+          $timescale = null) {
+
+    return new static($year, $month, $day, $hour, $min, $sec, $timezone,
+            $timescale);
+  }
+
+  /**
    * Creates a new AstroDate from a Julian date
    *
    * @param  float|string $jd        Julian date
@@ -226,23 +247,51 @@ class AstroDate {
     }
   }
 
+  /**
+   * Creates a new AstroDate instance representing the Summer Solstice of the
+   * provided year
+   *
+   * @param  int    $year
+   * @return static
+   */
   public static function solsticeSummer($year) {
-    $jd = static::solsticeJune($year, false);
+    $jd = static::solsticeJune((int)$year, false);
     return AstroDate::jd($jd, TimeScale::TT());
   }
 
+  /**
+   * Creates a new AstroDate instance representing the Winter Solstice of the
+   * provided year
+   *
+   * @param  int    $year
+   * @return static
+   */
   public static function solsticeWinter($year) {
-    $jd = static::solsticeDecember($year, false);
+    $jd = static::solsticeDecember((int)$year, false);
     return AstroDate::jd($jd, TimeScale::TT());
   }
 
+  /**
+   * Creates a new AstroDate instance representing the Spring (Vernal) Equinox
+   * of the provided year
+   *
+   * @param  int    $year
+   * @return static
+   */
   public static function equinoxSpring($year) {
-    $jd = static::equinoxMarch($year, false);
+    $jd = static::equinoxMarch((int)$year, false);
     return AstroDate::jd($jd, TimeScale::TT());
   }
 
+  /**
+   * Creates a new AstroDate instance representing the Autumn Equinox of the
+   * provided year
+   *
+   * @param  int    $year
+   * @return static
+   */
   public static function equinoxAutumn($year) {
-    $jd = static::equinoxSeptember($year, false);
+    $jd = static::equinoxSeptember((int)$year, false);
     return AstroDate::jd($jd, TimeScale::TT());
   }
 
