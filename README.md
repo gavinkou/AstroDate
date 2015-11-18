@@ -26,8 +26,8 @@ $ composer require marando/astrodate
 
 
 
-AstroDate Usage
----------------
+AstroDate Class
+===============
 
 
 ### Creating Instances
@@ -386,8 +386,8 @@ The `AstroDate` class provides a few default formats:
 
 
 
-Epoch Usage
------------
+Epoch Class
+===========
 
 ### Creation
 
