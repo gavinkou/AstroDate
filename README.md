@@ -13,8 +13,8 @@ $ composer require marando/astrodate
 ```
 
 
-Usage
------
+AstroDate Usage
+---------------
 
 
 ### Creating Instances
@@ -96,18 +96,6 @@ Results:
 ```
 By default the dates are returned in the Terrestrial Time scale but they can be converted to another time scale using one of the appropriate methods that will be discussd further below. Also, the current method for Equinox or Solstice calculation employed is of lower accuracy, and a higher algorithm is expected to be implemented in the future.
 
-### Converting to Another Time Zone or Time Standard
-
-#### Converting to Another Time Zone
-
-#### Converting to Coordinated Universal Time (UTC)
-
-#### International Atomic Time (TAI)
-
-#### Terrestrial Dynamic Time (TT or TDT)
-
-#### Barycentric Dynamic Time (TDB)
-
 
 ### Date & Time Property Components
 Each instance has the following properties:
@@ -144,8 +132,40 @@ Results:
 ```
 You can also use the `setDate()`, `setTime()` and `setDateTime()` methods for writing to properties
 
-### Mathematical Operations
+### Converting to Another Time Zone or Time Standard
 
+#### Converting to Another Time Zone
+
+#### Converting to Coordinated Universal Time (UTC)
+
+#### International Atomic Time (TAI)
+
+#### Terrestrial Dynamic Time (TT or TDT)
+
+#### Barycentric Dynamic Time (TDB)
+
+### Sidereal Time
+#### Sidereal Time at Greenwich
+```php
+AstroDate::now()->sidereal('a');  // Apparent sidereal time
+AstroDate::now()->sidereal('m');  // Mean sidereal time
+```
+```
+9.323 hours
+9.324 hours
+```
+#### Local Sidereal Time
+```php
+                                // Specify local longitude
+AstroDate::now()->sidereal('a', Angle::deg(-90));
+AstroDate::now()->sidereal('m', Angle::deg(-90));
+```
+```
+3.361 hours
+3.361 hours
+```
+
+### Mathematical Operations
 #### Adding/Subtracting a Time Duration
 ```php
 print AstroDate::create(2015, 11, 20, 9, 17, 43.750);
@@ -313,6 +333,10 @@ The `AstroDate` class provides a few default formats:
 
 
 
+
+
+Epoch Usage
+-----------
 
 
 
