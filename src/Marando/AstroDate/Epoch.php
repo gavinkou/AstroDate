@@ -20,13 +20,6 @@
 
 namespace Marando\AstroDate;
 
-/**
- * Represents an astronomical epoch reference point
- *
- * @property float    $jd   Julian day count of the epoch
- * @property float    $year Year of the epoch
- * @property YearType $type Year type, Julian or Besselian
- */
 class Epoch {
   //----------------------------------------------------------------------------
   // Constants
@@ -46,18 +39,12 @@ class Epoch {
   // Constructors
   //----------------------------------------------------------------------------
 
-  /**
-   * Creates a new Epoch instance
-   *
-   * @param float    $jd   Julian day count of the epoch
-   * @param YearType $type Year type, Julian or Bessilian
-   */
   public function __construct($jd, YearType $type = null) {
     $this->jd   = $jd;
     $this->type = $type ? $type : YearType::Julian();
   }
 
-  // // // Stati
+  // // // Static
 
   /**
    * Creates a new Epoch instance from a Julian day count
@@ -76,7 +63,10 @@ class Epoch {
    * @return static
    */
   public static function dt(AstroDate $dt) {
-    return new static($dt->toTT()->jd);
+    $epoch     = new static($dt->toTT()->toJD());
+    $epoch->dt = $dt->copy();
+
+    return $epoch;
   }
 
   /**
@@ -167,6 +157,12 @@ class Epoch {
    */
   protected $type;
 
+  /**
+   * AstroDate equivalent (if set from one)
+   * @var AstroDate
+   */
+  protected $dt;
+
   public function __get($name) {
     switch ($name) {
       case 'jd':
@@ -190,7 +186,10 @@ class Epoch {
    * @return AstroDate
    */
   public function toDate() {
-    return AstroDate::jd($this->jd, TimeStandard::TT());
+    if ($this->dt)
+      return $this->dt;
+    else
+      return AstroDate::jd($this->jd, TimeScale::TT());
   }
 
   // // // Protected
@@ -217,7 +216,20 @@ class Epoch {
    */
   public function __toString() {
     $yearType = $this->type == YearType::Besselian() ? 'B' : 'J';
-    return "{$yearType}{$this->year}";
+
+    $epoch = '';
+    if (intval($this->year) == $this->year) {
+      $epoch = "{$yearType}{$this->year}.0";
+    }
+    else {
+      if (false)
+        $epoch = "{$yearType}{$this->year}";  // Old method
+      else
+        $epoch = $this->toDate()->format(AstroDate::FORMAT_EPOCH);
+    }
+
+    //return "Epoch $epoch";
+    return $epoch;
   }
 
 }
