@@ -123,18 +123,103 @@ Each property is also writable:
 print AstroDate::create(2015, 11, 10, 9, 17, 43.750);
 $d->hour = 23;
 print $d;
-
+```
+```
 Results:
 2015-Nov-10 09:17:43.750 UTC
 2015-Nov-10 23:17:43.750 UTC
 ```
 You can also use the `setDate()`, `setTime()` and `setDateTime()` methods for writing to properties
 
-### Adding and Difference
+### Mathematical Operations
 
-#### Adding a Time Duration
-
+#### Adding/Subtracting a Time Duration
+```php
+print AstroDate::create(2015, 11, 20, 9, 17, 43.750);
+print $d->add(Time::days(10));
+print $d->sub(Time::days(10));
+```
+```
+Results:
+2015-Nov-30 09:17:43.750 UTC
+2015-Nov-10 09:17:43.750 UTC
+```
 #### Difference Between Two Dates
+```php
+print $d1 = AstroDate::create(2015, 11, 10);
+print $d2 = AstroDate::create(2020, 11, 10);
+print $d1->diff($d2);
+```
+```
+Results:
+2015-Nov-10 00:00:00.000 UTC
+2020-Nov-10 00:00:00.000 UTC
+1827 days
+```
+
+### Converting to Another Time Zone or Time Standard
+
+#### Converting to Another Time Zone
+
+#### Converting to Coordinated Universal Time (UTC)
+
+#### International Atomic Time (TAI)
+
+#### Terrestrial Dynamic Time (TT or TDT)
+
+#### Barycentric Dynamic Time (TDB)
+
+
+### Day and Month Names
+#### Day Name
+```php
+AstroDate::create(2015, 11, 10)->dayName();
+AstroDate::create(2015, 11, 10)->dayName(false);
+```
+```
+Results:
+Tuesday
+Tue
+```
+#### Month Name
+```php
+AstroDate::create(2015, 11, 10)->monthName();
+AstroDate::create(2015, 11, 10)->monthName(true);
+```
+```
+Results:
+Nov
+November
+```
+
+### Time Since and Until Midnight
+```php
+AstroDate::create(2015, 11, 10, 14, 25, 12)->sinceMidnight();
+AstroDate::create(2015, 11, 10, 14, 25, 12)->untilMidnight();
+```
+```
+Results:
+14.42 hours
+9.58 hours
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
