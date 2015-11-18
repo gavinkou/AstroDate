@@ -43,7 +43,8 @@ use \Marando\Units\Time;
 class AstroDate {
 
   use \Marando\Units\Traits\CopyTrait,
-      \Marando\AstroDate\Traits\FormatTrait;
+      \Marando\AstroDate\Traits\FormatTrait,
+      \Marando\AstroDate\Traits\SolsticeEquinoxTrait;
 
   //----------------------------------------------------------------------------
   // Constructors
@@ -223,6 +224,26 @@ class AstroDate {
 
       return $dt;
     }
+  }
+
+  public static function solsticeSummer($year) {
+    $jd = static::solsticeJune($year, false);
+    return AstroDate::jd($jd, TimeScale::TT());
+  }
+
+  public static function solsticeWinter($year) {
+    $jd = static::solsticeDecember($year, false);
+    return AstroDate::jd($jd, TimeScale::TT());
+  }
+
+  public static function equinoxSpring($year) {
+    $jd = static::equinoxMarch($year, false);
+    return AstroDate::jd($jd, TimeScale::TT());
+  }
+
+  public static function equinoxAutumn($year) {
+    $jd = static::equinoxSeptember($year, false);
+    return AstroDate::jd($jd, TimeScale::TT());
   }
 
   //----------------------------------------------------------------------------
@@ -699,8 +720,8 @@ class AstroDate {
    */
   public function diff(AstroDate $b) {
     $prec = 12;
-    $jd1  = $this->jd($prec);
-    $jd2  = $b->jd($prec);
+    $jd1  = $this->toJD($prec);
+    $jd2  = $b->toJD($prec);
     $days = bcsub($jd1, $jd2, $prec);
 
     return Time::days(-1 * $days);
@@ -770,14 +791,6 @@ class AstroDate {
    */
   public function untilMidnight() {
     return Time::days(1 - $this->dayFrac)->setUnit('hours');
-  }
-
-  public function solstice() {
-   // use IAU ephem stuff
-  }
-
-  public function equinox() {
-    // use IAU ephem stuff
   }
 
   // // // Protected

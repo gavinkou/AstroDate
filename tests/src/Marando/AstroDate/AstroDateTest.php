@@ -2,6 +2,7 @@
 
 namespace Marando\AstroDate;
 
+use \Marando\Units\Angle;
 use \Marando\Units\Time;
 use \PHPUnit_Framework_TestCase;
 
@@ -49,9 +50,10 @@ class AstroDateTest extends PHPUnit_Framework_TestCase {
 
   /**
    * @covers Marando\AstroDate\AstroDate::now
-   * @todo   Implement testNow().
    */
   public function testNow() {
+    // Not really sure how to test this?
+    // // //
     // Remove the following lines when you implement this test.
     $this->markTestIncomplete(
             'This test has not been implemented yet.'
@@ -451,79 +453,195 @@ class AstroDateTest extends PHPUnit_Framework_TestCase {
 
   /**
    * @covers Marando\AstroDate\AstroDate::diff
-   * @todo   Implement testDiff().
    */
   public function testDiff() {
-    // Remove the following lines when you implement this test.
-    $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-    );
+    $tests = [
+        [AstroDate::jd(2451545.5), AstroDate::jd(2451555.5), Time::days(10)],
+        [AstroDate::jd(2451545.5), AstroDate::jd(2451556.0), Time::days(10.5)],
+        [AstroDate::jd(2451545.5), AstroDate::jd(2451595.5), Time::days(50)],
+    ];
+
+    foreach ($tests as $t) {
+      $dt1  = $t[0];
+      $dt2  = $t[1];
+      $diff = $t[2];
+
+      $this->assertEquals($diff, $dt1->diff($dt2));
+    }
   }
 
   /**
    * @covers Marando\AstroDate\AstroDate::toEpoch
-   * @todo   Implement testToEpoch().
    */
   public function testToEpoch() {
-    // Remove the following lines when you implement this test.
-    $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-    );
+    $dt = new AstroDate(2000, 1, 1, 12, 0, 0, null, TimeScale::TT());
+    $this->assertEquals((string)Epoch::J2000(), (string)$dt->toEpoch());
   }
 
   /**
    * @covers Marando\AstroDate\AstroDate::dayOfYear
-   * @todo   Implement testDayOfYear().
    */
   public function testDayOfYear() {
-    // Remove the following lines when you implement this test.
-    $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-    );
+    $tests = [
+        1   => new AstroDate(2000, 1, 1),
+        365 => new AstroDate(2015, 12, 31),
+        366 => new AstroDate(2016, 12, 31),
+    ];
+
+    foreach ($tests as $dayOfYear => $dt)
+      $this->assertEquals($dayOfYear, $dt->dayOfYear(), $dayOfYear);
   }
 
   /**
    * @covers Marando\AstroDate\AstroDate::sidereal
-   * @todo   Implement testSidereal().
    */
   public function testSidereal() {
-    // Remove the following lines when you implement this test.
-    $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-    );
+    $tests = [
+        [1.754174971870091203, AstroDate::mjd(53736.0, TimeScale::UT1())->sidereal('m'), 1e-9],
+        [1.75416613767501915, AstroDate::mjd(53736.0, TimeScale::UT1())->sidereal('a'), 1e-8],
+        [1.754174971870091203 + deg2rad(-20), AstroDate::mjd(53736.0,
+                    TimeScale::UT1())->sidereal('m', Angle::deg(-20)), 1e-9],
+        [1.75416613767501915 + deg2rad(-20), AstroDate::mjd(53736.0,
+                    TimeScale::UT1())->sidereal('a', Angle::deg(-20)), 1e-8],
+    ];
+
+    foreach ($tests as $t) {
+      $expt = $t[0];
+      $st   = $t[1];
+      $this->assertEquals($expt, $st->toAngle()->rad, null, $t[2]);
+    }
   }
 
   /**
    * @covers Marando\AstroDate\AstroDate::sinceMidnight
-   * @todo   Implement testSinceMidnight().
    */
   public function testSinceMidnight() {
-    // Remove the following lines when you implement this test.
-    $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-    );
+    $dt = new AstroDate(2015, 1, 10, 12, 43, 17);
+    $this->assertEquals(45797, $dt->sinceMidnight()->sec);
   }
 
   /**
    * @covers Marando\AstroDate\AstroDate::untilMidnight
-   * @todo   Implement testUntilMidnight().
    */
   public function testUntilMidnight() {
-    // Remove the following lines when you implement this test.
-    $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-    );
+    $dt = new AstroDate(2015, 1, 10, 12, 43, 17);
+    $this->assertEquals(40603, $dt->untilMidnight()->sec);
   }
 
   /**
    * @covers Marando\AstroDate\AstroDate::__toString
-   * @todo   Implement test__toString().
    */
   public function test__toString() {
-    // Remove the following lines when you implement this test.
-    $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-    );
+    $dt    = new AstroDate(1960, 2, 23, 19, 20, 12);
+    AstroDate::FORMAT_DEFAULT;
+    $tests = [
+        'Y M. c T'        => '1960 Feb. 23.8056944 UTC',
+        'r Y-M-c T'       => 'A.D. 1960-Feb-23.8056944 UTC',
+        'Y-M-d H:i:s.u T' => '1960-Feb-23 19:20:12.000 UTC',
+    ];
+
+    foreach ($tests as $format => $str) {
+      $dt->format($format);
+
+      // Check that format persists with to string
+      $this->assertEquals($str, (string)$dt, $format);
+    }
+  }
+
+  /**
+   * @covers Marando\AstroDate\AstroDate::solsticeSummer
+   */
+  public function testSolsticeSummer() {
+    $jun = [
+        [1996, 21, 2, 24, 46],
+        [1997, 21, 8, 20, 59],
+        [1998, 21, 14, 3, 38],
+        [1999, 21, 19, 50, 11],
+        [2000, 21, 1, 48, 46],
+        [2001, 21, 7, 38, 48],
+        [2002, 21, 13, 25, 29],
+        [2003, 21, 19, 11, 32],
+        [2004, 21, 0, 57, 57],
+        [2005, 21, 6, 47, 12],
+    ];
+
+    foreach ($jun as $s) {
+      $equinox  = AstroDate::solsticeSummer($s[0]);
+      $expected = new AstroDate($s[0], 6, $s[1], $s[2], $s[3], $s[4]);
+      $this->assertEquals($expected->toJD(), $equinox->toJD(), $s[0], 1e-3);
+    }
+  }
+
+  /**
+   * @covers Marando\AstroDate\AstroDate::solsticeWinter
+   */
+  public function testSolsticeWinter() {
+    $dec = [
+        [1996, 21, 14, 6, 56],
+        [1997, 21, 20, 8, 5],
+        [1998, 22, 1, 57, 31],
+        [1999, 22, 7, 44, 52],
+        [2000, 21, 13, 38, 30],
+        [2001, 21, 19, 22, 34],
+        [2002, 22, 1, 15, 26],
+        [2003, 22, 7, 4, 53],
+        [2004, 21, 12, 42, 40],
+        [2005, 21, 18, 36, 1],
+    ];
+
+    foreach ($dec as $s) {
+      $equinox  = AstroDate::solsticeWinter($s[0]);
+      $expected = new AstroDate($s[0], 12, $s[1], $s[2], $s[3], $s[4]);
+      $this->assertEquals($expected->toJD(), $equinox->toJD(), $s[0], 1e-3);
+    }
+  }
+
+  /**
+   * @covers Marando\AstroDate\AstroDate::equinoxSpring
+   */
+  public function testEquinoxSpring() {
+    $mar = [
+        [1996, 20, 8, 4, 7],
+        [1997, 20, 13, 55, 42],
+        [1998, 20, 19, 55, 35],
+        [1999, 21, 1, 46, 53],
+        [2000, 20, 7, 36, 19],
+        [2001, 20, 13, 31, 47],
+        [2002, 20, 19, 17, 13],
+        [2003, 21, 1, 0, 50],
+        [2004, 20, 6, 49, 42],
+        [2005, 20, 12, 34, 29],
+    ];
+
+    foreach ($mar as $e) {
+      $equinox  = AstroDate::equinoxSpring($e[0]);
+      $expected = new AstroDate($e[0], 3, $e[1], $e[2], $e[3], $e[4]);
+      $this->assertEquals($expected->toJD(), $equinox->toJD(), $e[0], 1e-3);
+    }
+  }
+
+  /**
+   * @covers Marando\AstroDate\AstroDate::equinoxAutumn
+   */
+  public function testEquinoxAutumn() {
+    $sep = [
+        [1996, 22, 18, 1, 8],
+        [1997, 22, 23, 56, 49],
+        [1998, 23, 5, 38, 15],
+        [1999, 23, 11, 32, 34],
+        [2000, 22, 17, 28, 40],
+        [2001, 22, 23, 5, 32],
+        [2002, 23, 4, 56, 28],
+        [2003, 23, 10, 47, 53],
+        [2004, 22, 16, 30, 54],
+        [2005, 22, 22, 24, 14],
+    ];
+
+    foreach ($sep as $e) {
+      $equinox  = AstroDate::equinoxAutumn($e[0]);
+      $expected = new AstroDate($e[0], 9, $e[1], $e[2], $e[3], $e[4]);
+      $this->assertEquals($expected->toJD(), $equinox->toJD(), $e[0], 1e-3);
+    }
   }
 
 }

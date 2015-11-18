@@ -28,7 +28,7 @@ use \Marando\Units\Time;
 class GenericTest extends PHPUnit_Framework_TestCase {
 
   public function test() {
-
+    return;
     // Converts to J2000.0
     echo "\n" . AstroDate::parse('2000-Jan-1 12:00:00 TT')->toEpoch();
 
@@ -37,7 +37,7 @@ class GenericTest extends PHPUnit_Framework_TestCase {
     echo "\n\n" . AstroDate::now()->toEpoch();
     $d = AstroDate::now()->setTimezone('est');
 
-    echo "\n\n". $d->sinceMidnight();
+    echo "\n\n" . $d->sinceMidnight();
 
     echo "\n\n";
 
