@@ -229,7 +229,74 @@ The `AstroDate` class provides a few default formats:
  `FORMAT_JPL`     | `r Y-M-c T`       | A.D. 2015-Nov-18.2187713 UTC
  `FORMAT_EPOCH`   | `Y M. c T`        | 2015 Nov. 18.2187717 UTC
 
+…but you can use whatevr format you want with the following format codes:
 
+##### Day
+
+     | Description 
+-----|----------------------------------------------------------------------
+ `d` | Day of the month, 2 digits with leading zeros
+ `D` | Textual representation of a day, three letters
+ `j` | Day of the month without leading zeros
+ `l` | A full textual uppercase representation of the day of the week
+ `L` | A full textual lowercase representation of the day of the week
+ `N` | ISO-8601 numeric representation of the day of the week 1=Mon, 7=Sun
+ `S` | English ordinal suffix for the day of the month, 2 characters
+ `w` | Numeric representation of the day of the week 0=Sun, 6=Sat
+ `z` | The day of the year (starting from 1)
+
+##### Week
+
+     | Description 
+-----|----------------------------------------------------------------------
+ `W` | ISO-8601 week number of year, weeks starting on Monday
+
+##### Month
+
+     | Description 
+-----|----------------------------------------------------------------------
+ `F` | A full textual representation of a month, such as January or March
+ `m` | Numeric representation of a month, with leading zeros
+ `M` | A short textual representation of a month, three letters
+ `n` | Numeric representation of a month, without leading zeros
+ `t` | Number of days in the given month
+ 
+##### Year
+
+     | Description 
+-----|----------------------------------------------------------------------
+ `Y` | A full numeric representation of a year, 4 digits
+ `y` | A two digit representation of a year
+ 
+##### Time
+
+     | Description 
+-----|----------------------------------------------------------------------
+ `a` | Lowercase Ante meridiem and Post meridiem
+ `A` | Uppercase Ante meridiem and Post meridiem
+ `g` | 12-hour format of an hour without leading zeros
+ `G` | 24-hour format of an hour without leading zeros
+ `h` | 12-hour format of an hour with leading zeros
+ `H` | 24-hour format of an hour with leading zeros
+ `i` | Minutes with leading zeros
+ `s` | Seconds with leading zeros
+ `u` | Milliseconds
+ 
+##### Time Zone
+
+     | Description 
+-----|----------------------------------------------------------------------
+ `e` | Timezone/Timescale identifier
+ `O` | Difference to UTC in hours
+ `P` | Difference to UTC in hours with colon
+ `Z` | Timezone offset in seconds
+ 
+##### Misc
+
+     | Description 
+-----|----------------------------------------------------------------------
+ `r` | Era, A.D. or B.C. (added for AstroDate)
+ `c` | Day with fraction (added for AstroDate)
 
 
 
