@@ -131,6 +131,29 @@ Results:
 ```
 You can also use the `setDate()`, `setTime()` and `setDateTime()` methods for writing to properties
 
+#### Leap Year
+You can get if a year is a leap year or not from the `isLeapYear()` function:
+```php
+$d1 = AstroDate::create(2015, 11, 10)->isLeapYear();
+$d2 = AstroDate::create(2016, 11, 10)->isLeapYear();
+
+var_dump($d1);
+var_dump($d2);
+```
+```
+bool(false)
+bool(true)
+```
+#### Day of the Year
+The day number out of the year can be returned as follows:
+```php
+AstroDate::create(2015, 11, 10, 9)->dayOfYear()
+```
+```
+Results:
+314
+```
+
 ### Mathematical Operations
 
 #### Adding/Subtracting a Time Duration
@@ -156,20 +179,6 @@ Results:
 2020-Nov-10 00:00:00.000 UTC
 1827 days
 ```
-
-### Converting to Another Time Zone or Time Standard
-
-#### Converting to Another Time Zone
-
-#### Converting to Coordinated Universal Time (UTC)
-
-#### International Atomic Time (TAI)
-
-#### Terrestrial Dynamic Time (TT or TDT)
-
-#### Barycentric Dynamic Time (TDB)
-
-
 ### Day and Month Names
 #### Day Name
 ```php
@@ -202,6 +211,43 @@ Results:
 14.42 hours
 9.58 hours
 ```
+
+### Formatting Date/Time Strings
+Instances can be converted to whatever format you wish using the standard PHP format Date & Time characters. For example:
+
+```php
+AstroDate::now()->format('Y-M-d H:m:s');
+```
+```
+2015-Nov-18 05:11:24
+```
+The `AstroDate` class provides a few default formats:
+
+ Constant Name    | Format            | Example
+------------------|-------------------|------------------------------
+ `FORMAT_DEFAULT` | `Y-M-d H:i:s.u T` | 2015-Nov-18 05:15:01.400 UTC
+ `FORMAT_JPL`     | `r Y-M-c T`       | A.D. 2015-Nov-18.2187713 UTC
+ `FORMAT_EPOCH`   | `Y M. c T`        | 2015 Nov. 18.2187717 UTC
+
+
+
+
+
+
+### Converting to Another Time Zone or Time Standard
+
+#### Converting to Another Time Zone
+
+#### Converting to Coordinated Universal Time (UTC)
+
+#### International Atomic Time (TAI)
+
+#### Terrestrial Dynamic Time (TT or TDT)
+
+#### Barycentric Dynamic Time (TDB)
+
+
+
 
 
 
