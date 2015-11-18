@@ -23,10 +23,23 @@ class TimeZoneTest extends \PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers Marando\AstroDate\TimeZone::name
+   * @covers Marando\AstroDate\TimeZone::parse
    */
-  public function testName() {
-    $this->assertEquals('EST', TimeZone::name('EST'));
+  public function testParse() {
+    $this->assertEquals('EST', TimeZone::parse('EST'));
+
+    $tests = [
+        'UT-1'     => -1,
+        'UT-1:30'  => -1.5,
+        'UT+11:30' => 11.5,
+        'UT+1130'  => 11.5,
+        'UT-0730'  => -7.5,
+    ];
+
+    foreach ($tests as $str => $offset) {
+      $tz = TimeZone::parse($str)->offset(2451545.5);
+      $this->assertEquals($offset, $tz, $str);
+    }
   }
 
   /**
@@ -59,7 +72,7 @@ class TimeZoneTest extends \PHPUnit_Framework_TestCase {
    * @covers Marando\AstroDate\TimeZone::__toString
    */
   public function test__toString() {
-    $mst = TimeZone::name('mst');
+    $mst = TimeZone::parse('mst');
     $this->assertEquals('MST', $mst->name);
   }
 

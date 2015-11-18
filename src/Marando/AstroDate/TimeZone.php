@@ -63,11 +63,19 @@ class TimeZone {
   }
 
   /**
-   * Creates a new timezone from name or abbreviation
+   * Creates a new timezone from a timezone name, abbreviation or UT offset
+   * specified as a string in the format UT+8 or UT+04:30
+   * 
    * @param  string $name
    * @return static
    */
-  public static function name($name) {
+  public static function parse($name) {
+    $utRegex = '[uUtT](\+*\-*)([0-9]{1,2}):{0,1}([0-9]{0,2})';
+    if (preg_match("/{$utRegex}/", $name, $ofst)) {
+      $offset = $ofst[1] . ($ofst[2] + $ofst[3] / 60);
+      return TimeZone::UT($offset);
+    }
+
     // Use PHP DateTimeZone to get info below...
     $dtz = new DateTimeZone($name);
     $dt  = new DateTime('2000-01-01');

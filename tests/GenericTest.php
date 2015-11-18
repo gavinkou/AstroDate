@@ -64,7 +64,7 @@ class GenericTest extends PHPUnit_Framework_TestCase {
 
 
     echo "\n\n" . AstroDate::now();
-    echo "\n" . $d = AstroDate::now()->setTimezone(TimeZone::name('EST'));
+    echo "\n" . $d = AstroDate::now()->setTimezone(TimeZone::parse('EST'));
     echo "\n" . $d->toTDB();
     echo "\n" . $d->toUTC();
     echo "\n" . $d = AstroDate::now()->setTimezone('MST');
@@ -72,21 +72,21 @@ class GenericTest extends PHPUnit_Framework_TestCase {
 
     return;
     echo "\n" . AstroDate::parse('2015-Dec-10 6:00');
-    echo "\n" . AstroDate::parse('2015-Dec-10 6:00')->setTimezone(TimeZone::name('EST'));
+    echo "\n" . AstroDate::parse('2015-Dec-10 6:00')->setTimezone(TimeZone::parse('EST'));
 
 
     echo "\n" . AstroDate::now();
-    echo "\n" . AstroDate::now()->setTimezone(TimeZone::name('EST'));
-    echo "\n" . AstroDate::now()->setTimezone(TimeZone::name('PST'));
+    echo "\n" . AstroDate::now()->setTimezone(TimeZone::parse('EST'));
+    echo "\n" . AstroDate::now()->setTimezone(TimeZone::parse('PST'));
     echo "\n" . AstroDate::now()->setTimezone(TimeZone::UT(6));
 
-    echo "\n" . TimeZone::name('est')->offset;
-    echo "\n" . TimeZone::name('est')->offset(2451545.5);
-    echo "\n" . TimeZone::name('est')->offset(2451589.5);
+    echo "\n" . TimeZone::parse('est')->offset;
+    echo "\n" . TimeZone::parse('est')->offset(2451545.5);
+    echo "\n" . TimeZone::parse('est')->offset(2451589.5);
 
     return;
     echo "\n" . TimeZone::UT(-2);
-    echo "\n" . TimeZone::name('EST');
+    echo "\n" . TimeZone::parse('EST');
 
     echo "\n" . AstroDate::now()
             ->setTimezone(TimeZone::EST())

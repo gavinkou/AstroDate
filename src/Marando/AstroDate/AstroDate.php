@@ -67,12 +67,12 @@ class AstroDate {
   /**
    * A.D. 2015-Nov-03 19:43:43.180 TT
    */
-  const FORMAT_JPL = 'r Y-M-d H:i:s.u T';
+  const FORMAT_JPL_HMS = 'r Y-M-d H:i:s.u T';
 
   /**
    * A.D. 2015-Nov-3.8223053 TT
    */
-  const FORMAT_JPL_FRAC = 'r Y-M-c T';
+  const FORMAT_JPL = 'r Y-M-c T';
 
   /**
    * Monday, November 16, 2015 8:20 AM (UTC)
@@ -136,8 +136,8 @@ class AstroDate {
   /**
    * Creates a new AstroDate from a Julian date
    *
-   * @param  float     $jd        Julian date
-   * @param  TimeScale $timescale Astronomical time standard, e.g. TAI or TT
+   * @param  float|string $jd        Julian date
+   * @param  TimeScale    $timescale Astronomical time standard, e.g. TAI or TT
    * @return static
    */
   public static function jd($jd, TimeScale $timescale = null) {
@@ -195,7 +195,7 @@ class AstroDate {
       $dt->add(Time::sec($t[7]));
 
       try {
-        $dt->timezone  = TimeZone::name($t[8]);
+        $dt->timezone  = TimeZone::parse($t[8]);
         $dt->timescale = TimeScale::UTC();
       }
       catch (Exception $e) {
@@ -213,7 +213,7 @@ class AstroDate {
       $dt->add(Time::sec($t[7]));
 
       try {
-        $dt->timezone  = TimeZone::name($t[8]);
+        $dt->timezone  = TimeZone::parse($t[8]);
         $dt->timescale = TimeScale::UTC();
       }
       catch (Exception $e) {
@@ -379,16 +379,16 @@ class AstroDate {
   public function setTimezone($timezone) {
     // Check type, and parse string if present
     if (is_string($timezone))
-      $timezone = TimeZone::name($timezone);
+      $timezone = TimeZone::parse($timezone);
     else if ($timezone instanceof TimeZone == false)
       throw new \InvalidArgumentException();
 
     // Convert back to UTC
-    $this->toUTC();
-
+    //$this->toUTC();
     // Compute new UTC offset
     $jd       = $this->toJD();
     $tzOffset = $timezone->offset($jd) - $this->timezone->offset($jd);
+
     $this->add(Time::hours($tzOffset));
 
     // Set the timezone
@@ -772,6 +772,14 @@ class AstroDate {
     return Time::days(1 - $this->dayFrac)->setUnit('hours');
   }
 
+  public function solstice() {
+   // use IAU ephem stuff
+  }
+
+  public function equinox() {
+    // use IAU ephem stuff
+  }
+
   // // // Protected
 
   /**
@@ -845,7 +853,7 @@ class AstroDate {
   protected function getComponent($e) {
     // JD -> Date
     $ihmsf = [];
-    IAU::D2dtf($this->timescale, $this->prec - 1, $this->jd, $this->dayFrac,
+    IAU::D2dtf($this->timescale, $this->prec - 2, $this->jd, $this->dayFrac,
             $iy, $im, $id, $ihmsf);
 
     switch ($e) {
