@@ -107,6 +107,7 @@ trait FormatTrait {
 
     $this->format_r($format);
     $this->format_c($format);
+    $this->formatC($format);
 
     // Replace escape character and return formatted string
     return str_replace('\\', '', $format);
@@ -420,7 +421,7 @@ trait FormatTrait {
   }
 
   /**
-   * Day with fraction (added for AstroDate)
+   * Day without leading zero and fraction (added for AstroDate)
    * @param type $str
    */
   private function format_c(&$str) {
@@ -429,6 +430,21 @@ trait FormatTrait {
         $str = str_replace('%c', "{$this->day}.0", $str);
       else
         $str = str_replace('%c', round($this->day + $this->dayFrac, 7), $str);
+  }
+
+  /**
+   * Day with leading zero and fraction (added for AstroDate)
+   * @param type $str
+   */
+  private function formatC(&$str) {
+    if (strstr($str, '%C')) {
+      if ($this->dayFrac == 0)
+        $df = "{$this->day}.0";
+      else
+        $df = round($this->day + $this->dayFrac, 7);
+
+      $str = str_replace('%C', str_pad($df, 10, 0, STR_PAD_LEFT), $str);
+    }
   }
 
 }
