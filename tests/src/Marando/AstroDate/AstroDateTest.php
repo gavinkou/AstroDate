@@ -52,12 +52,10 @@ class AstroDateTest extends PHPUnit_Framework_TestCase {
    * @covers Marando\AstroDate\AstroDate::now
    */
   public function testNow() {
-    // Not really sure how to test this?
-    // // //
-    // Remove the following lines when you implement this test.
-    $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-    );
+    $d1 = AstroDate::now();
+    $d2 = AstroDate::now();
+
+    $this->assertGreaterThanOrEqual($d1->toJD(), $d2->toJD());
   }
 
   /**
@@ -66,24 +64,41 @@ class AstroDateTest extends PHPUnit_Framework_TestCase {
    */
   public function testParse() {
     $dates = [
-        ['2015-1-10 10:34', 2015, 1, 10, 10, 34, 0],
-        ['2015-1-10 10:34:16', 2015, 1, 10, 10, 34, 16],
-        ['2015-1-10 10:34:16 PST', 2015, 1, 10, 10, 34, 16, TimeZone::parse('PST')],
-        ['2015-Feb-19 03:10', 2015, 2, 19, 3, 10, 0],
-        ['2015-Feb-19 03:10:23 EST', 2015, 2, 19, 3, 10, 23, TimeZone::parse('EST')],
-        ['2015-Feb-19 03:10:23 EST', 2015, 2, 19, 3, 10, 23, TimeZone::parse('EST')],
+        ['2015-Nov-16 05:07:07.3 PM UTC', 2015, 11, 16, 17, 7, 7, .3, 'UTC'],
+        ['-300-Nov-16 05:07:07.3 PM UTC', -300, 11, 16, 17, 7, 7, .3, 'UTC'],
+        ['Tue, 2015-Nov-16 05:07:07.3 PM UTC', 2015, 11, 16, 17, 7, 7, .3, 'UTC'],
+        ['2015-Nov-16 05:07:07.3 PM TT', 2015, 11, 16, 17, 7, 7, .3, 'TT'],
+        ['2015-Nov-16 05:07:07.3 TT', 2015, 11, 16, 5, 7, 7, .3, 'TT'],
+        ['2015-Nov-16 05:07:07 TT', 2015, 11, 16, 5, 7, 7, 0, 'TT'],
+        ['2015-Nov-16 05:07:07', 2015, 11, 16, 5, 7, 7, 0, 'UTC'],
+        ['2015-Nov-16 05:07', 2015, 11, 16, 5, 7, 0, 0, 'UTC'],
+        ['2015-Nov-16 05:07 TT', 2015, 11, 16, 5, 7, 0, 0, 'TT'],
+        ['2015-Nov-16 TT', 2015, 11, 16, 0, 0, 0, 0, 'TT'],
+        ['20155-Nov-16', 20155, 11, 16, 0, 0, 0, 0, 'UTC'],
+        ['2015-11-16', 2015, 11, 16, 0, 0, 0, 0, 'UTC'],
+        ['2015/11/16', 2015, 11, 16, 0, 0, 0, 0, 'UTC'],
+        ['2015 11 16', 2015, 11, 16, 0, 0, 0, 0, 'UTC'],
+        // // //
+        ['2010 Jan. 4.255 TT', 2010, 1, 4, 6, 7, 12, 0, 'TT'],
+        ['2010 Jan. 4.255', 2010, 1, 4, 6, 7, 12, 0, 'UTC'],
+        ['-2010 January 4.255', -2010, 1, 4, 6, 7, 12, 0, 'UTC'],
+        ['2010/Jan/4.255', 2010, 1, 4, 6, 7, 12, 0, 'UTC'],
+        ['2010-Jan-4.255', 2010, 1, 4, 6, 7, 12, 0, 'UTC'],
+            // // //
+            //['Jan 10, 2015 3:45:10.2 PM EST', 2015, 1, 10, 3, 45, 10, .2, 'EST'],
     ];
     foreach ($dates as $d) {
       $date = AstroDate::parse($d[0]);
-      $this->assertEquals($d[1], $date->year, 'year');
-      $this->assertEquals($d[2], $date->month, 'month');
-      $this->assertEquals($d[3], $date->day, 'day');
-      $this->assertEquals($d[4], $date->hour, 'hour');
-      $this->assertEquals($d[5], $date->min, 'min');
-      $this->assertEquals($d[6], $date->sec, 'sec');
+      $this->assertEquals($d[1], $date->year, $d[0] . ' year');
+      $this->assertEquals($d[2], $date->month, $d[0] . ' month');
+      $this->assertEquals($d[3], $date->day, $d[0] . ' day');
+      $this->assertEquals($d[4], $date->hour, $d[0] . ' hours');
+      $this->assertEquals($d[5], $date->min, $d[0] . ' min');
+      $this->assertEquals($d[6], $date->sec, $d[0] . ' sec');
+      $this->assertEquals($d[7], (float)"0.$date->micro", $d[0] . ' micro');
 
-      if (count($d) > 7)
-        $this->assertEquals($d[7], $date->timezone, 'timezone');
+      $tzts = $date->timescale->abr == $d[8] || $date->timezone->name == $d[8];
+      $this->assertTrue($tzts, $d[0] . ' timezone');
     }
   }
 

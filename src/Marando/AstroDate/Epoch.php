@@ -225,7 +225,7 @@ class Epoch {
       if (false)
         $epoch = "{$yearType}{$this->year}";  // Old method
       else
-        $epoch = $this->toDate()->format(AstroDate::FORMAT_EPOCH);
+        $epoch = $this->toDate()->toTT()->format(AstroDate::FORMAT_EPOCH);
     }
 
     //return "Epoch $epoch";

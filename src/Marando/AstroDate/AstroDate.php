@@ -73,7 +73,7 @@ class AstroDate {
   /**
    * A.D. 2015-Nov-3.8223053 TT
    */
-  const FORMAT_JPL = 'r Y-M-c T';
+  const FORMAT_JPL = 'r Y-M-C T';
 
   /**
    * Monday, November 16, 2015 8:20 AM (UTC)
@@ -212,7 +212,60 @@ class AstroDate {
    * @return static
    */
   public static function parse($datetime) {
-    // 2015-Nov-16 17:07:07.120 UTC
+    $formats = [
+         /**
+         * 2010 Jan. 4.32425 TT
+         * 2010-1-4.32425 TT
+         * ...
+         */
+        '[a-zA-Z,\s]*([\+\-0-9]{1,7})[-\/\s]([a-zA-Z\.]{3,9}|[0-9]{1,2})[-\/\s]([0-9]{1,2}\.[0-9]*)\s*()()()()()([a-zA-Z]{2,3})*',
+        /**
+         * 2015-Nov-16 05:07:07.03223432 PM UTC
+         * 2015-11-16 05:07:07.03223432 PM UTC
+         * ...
+         */
+        '[a-zA-Z,\s]*([\+\-0-9]{1,7})[-\/\s]([a-zA-Z]{3,9}|[0-9]{1,2})[-\/\s]([0-9]{1,2})\s*([0-9]{0,2}):*([0-9]{0,2}):*([0-9]{0,2})(\.*[0-9]*)\s*(am|AM|pm|PM)*\s*([a-zA-Z]{0,3})',
+    ];
+
+    foreach ($formats as $format) {
+      if (preg_match("/{$format}/", trim($datetime), $t)) {
+        $y  = $t[1];
+        $m  = static::monthNum($t[2]) ? static::monthNum($t[2]) : $t[2];
+        $d  = intval($t[3]);
+        $df = $t[3] - intval($t[3]);
+        $h  = key_exists(4, $t) ? $t[4] : 0;
+        $i  = key_exists(5, $t) ? $t[5] : 0;
+        $s  = key_exists(6, $t) ? $t[6] : 0;
+        $u  = key_exists(7, $t) ? $t[7] : 0;
+        $a  = key_exists(8, $t) ? $t[8] : 0;
+        $z  = key_exists(9, $t) ? $t[9] : 0;
+
+        if (strtolower($a) == 'pm')
+          $h += 12;
+
+        $dt = new static($y, $m, $d, $h, $i, $s);
+        $dt->add(Time::sec($u));
+
+        if ($df)
+          $dt->add(Time::days($df));
+
+        try {
+          $dt->timezone  = TimeZone::parse($z);
+          $dt->timescale = TimeScale::UTC();
+        }
+        catch (Exception $e) {
+          $dt->timescale = TimeScale::parse($z);
+          $dt->timezone  = TimeZone::UTC();
+        }
+
+        return $dt;
+      }
+    }
+
+    throw new Exception("Unable to parse date/time string {$datetime}");
+
+    return;
+// 2015-Nov-16 17:07:07.120 UTC
     $format1 = '^([\+\-]*[0-9]{1,7})-([a-zA-Z]{1,9})-([0-9]{1,2})\s([0-9]{1,2}):([0-9]{1,2}):*([0-9]{0,2})(\.*[0-9]*)\s*([a-zA-Z]*)$';
     if (preg_match("/{$format1}/", $datetime, $t)) {
       $m  = static::monthNum($t[2]);
@@ -231,6 +284,7 @@ class AstroDate {
       return $dt;
     }
 
+
     // 2015-1-16 17:07:07.120 UTC
     $format2 = '^([\+\-]*[0-9]{1,7})-([0-9]{1,2})-([0-9]{1,2})\s([0-9]{1,2}):([0-9]{1,2}):*([0-9]{0,2})(\.*[0-9]*)\s*([a-zA-Z]*)$';
     if (preg_match("/{$format2}/", $datetime, $t)) {
@@ -248,6 +302,10 @@ class AstroDate {
 
       return $dt;
     }
+
+
+
+    throw new Exception("Unable to parse date/time string {$dt}");
   }
 
   /**
@@ -986,6 +1044,9 @@ class AstroDate {
         return 11;
       case 'dec':
         return 12;
+
+      default:
+        return null;
     }
   }
 

@@ -422,7 +422,8 @@ The `AstroDate` class provides a few default format constants:
      | Description 
 -----|----------------------------------------------------------------------
  `r` | Era, A.D. or B.C. (added for AstroDate)
- `c` | Day with fraction (added for AstroDate)
+ `c` | Day without leading zero and fraction (added for AstroDate)
+ `C` | Day with leading zero and fraction (added for AstroDate)
 
 
 
