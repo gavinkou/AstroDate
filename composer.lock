@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "6f3c77e75ed5a2635af4f2ddb5fefd7f",
-    "content-hash": "3b79af054a2b67ed4e6d5869233a1611",
+    "hash": "38c126b79cfd590b4fa169c852018911",
+    "content-hash": "99029dd9a83de9193a4271e1bc7edf4a",
     "packages": [
         {
             "name": "marando/php-iers",
-            "version": "0.1.3",
+            "version": "0.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/marando/phpIERS.git",
-                "reference": "eb97612c0c64ede35a1dcde5338fc4575192b5cf"
+                "reference": "196a58873e7b85ac8625d71b7742cea2143293b5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marando/phpIERS/zipball/eb97612c0c64ede35a1dcde5338fc4575192b5cf",
-                "reference": "eb97612c0c64ede35a1dcde5338fc4575192b5cf",
+                "url": "https://api.github.com/repos/marando/phpIERS/zipball/196a58873e7b85ac8625d71b7742cea2143293b5",
+                "reference": "196a58873e7b85ac8625d71b7742cea2143293b5",
                 "shasum": ""
             },
             "require": {
@@ -44,20 +44,20 @@
                 }
             ],
             "description": "A PHP package that simplifies obtaining Earth rotation values from IERS bulletins.",
-            "time": "2015-11-14 22:57:43"
+            "time": "2015-11-22 20:39:32"
         },
         {
             "name": "marando/php-sofa",
-            "version": "0.2-alpha.8",
+            "version": "0.2.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/marando/phpSOFA.git",
-                "reference": "1a13002023a9dcc496e901c2a6a8d15427f1d1a9"
+                "reference": "e849ac6413b806c1696486b8fd4fc6bcd1f28fd4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marando/phpSOFA/zipball/1a13002023a9dcc496e901c2a6a8d15427f1d1a9",
-                "reference": "1a13002023a9dcc496e901c2a6a8d15427f1d1a9",
+                "url": "https://api.github.com/repos/marando/phpSOFA/zipball/e849ac6413b806c1696486b8fd4fc6bcd1f28fd4",
+                "reference": "e849ac6413b806c1696486b8fd4fc6bcd1f28fd4",
                 "shasum": ""
             },
             "require": {
@@ -83,7 +83,7 @@
                 }
             ],
             "description": "A PHP port of the IAU SOFA Library",
-            "time": "2015-11-15 23:56:29"
+            "time": "2015-11-22 21:16:36"
         },
         {
             "name": "marando/units",
@@ -647,16 +647,16 @@
         },
         {
             "name": "phpunit/phpunit-mock-objects",
-            "version": "3.0.3",
+            "version": "3.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit-mock-objects.git",
-                "reference": "382c729a52b7ef682e94c73fd6868f5ee8116ba7"
+                "reference": "b28b029356e65091dfbf8c2bc4ef106ffece509e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit-mock-objects/zipball/382c729a52b7ef682e94c73fd6868f5ee8116ba7",
-                "reference": "382c729a52b7ef682e94c73fd6868f5ee8116ba7",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit-mock-objects/zipball/b28b029356e65091dfbf8c2bc4ef106ffece509e",
+                "reference": "b28b029356e65091dfbf8c2bc4ef106ffece509e",
                 "shasum": ""
             },
             "require": {
@@ -699,7 +699,7 @@
                 "mock",
                 "xunit"
             ],
-            "time": "2015-10-18 07:55:54"
+            "time": "2015-11-09 15:37:17"
         },
         {
             "name": "sebastian/comparator",
@@ -1163,9 +1163,7 @@
     ],
     "aliases": [],
     "minimum-stability": "alpha",
-    "stability-flags": {
-        "marando/php-sofa": 15
-    },
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

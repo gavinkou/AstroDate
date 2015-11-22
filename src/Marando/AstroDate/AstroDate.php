@@ -73,7 +73,7 @@ class AstroDate {
   /**
    * A.D. 2015-Nov-3.8223053 TT
    */
-  const FORMAT_JPL = 'r Y-M-C T';
+  const FORMAT_JPL = 'r Y-M-c T';
 
   /**
    * Monday, November 16, 2015 8:20 AM (UTC)
