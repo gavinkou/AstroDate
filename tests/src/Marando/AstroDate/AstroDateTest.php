@@ -84,11 +84,12 @@ class AstroDateTest extends PHPUnit_Framework_TestCase {
         ['-2010 January 4.255', -2010, 1, 4, 6, 7, 12, 0, 'UTC'],
         ['2010/Jan/4.255', 2010, 1, 4, 6, 7, 12, 0, 'UTC'],
         ['2010-Jan-4.255', 2010, 1, 4, 6, 7, 12, 0, 'UTC'],
-            // // //
+        // // //
+        ['2015-Nov-19 06:00 PM EST', 2015, 11, 19, 18, 0, 0, 0, 'EST'],
             //['Jan 10, 2015 3:45:10.2 PM EST', 2015, 1, 10, 3, 45, 10, .2, 'EST'],
     ];
     foreach ($dates as $d) {
-      $date = AstroDate::parse($d[0]);
+     echo "\n". $date = AstroDate::parse($d[0]);
       $this->assertEquals($d[1], $date->year, $d[0] . ' year');
       $this->assertEquals($d[2], $date->month, $d[0] . ' month');
       $this->assertEquals($d[3], $date->day, $d[0] . ' day');
