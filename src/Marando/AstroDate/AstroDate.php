@@ -826,7 +826,7 @@ class AstroDate {
   /**
    * Finds the difference between this AstroDate and another
    * @param  AstroDate $b
-   * @return static
+   * @return Time
    */
   public function diff(AstroDate $b) {
     $prec = 12;
